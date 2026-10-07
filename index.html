@@ -6,24 +6,27 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Google Drive Image Gallery (OAuth)</title>
+    <title>Daily Source</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
 
     <style>
       :root {
-        /* Modern Dark Theme Colors */
+        /* Modern Dark Theme Palette */
         --bg-color: #0f172a;
         --card-bg: #1e293b;
+        --card-sub-bg: #162032;
         --text-main: #f8fafc;
         --text-muted: #94a3b8;
         --primary: #3b82f6;
         --primary-hover: #60a5fa;
+        --accent-gold: #f59e0b;
+        --accent-gold-soft: rgba(245, 158, 11, 0.12);
 
         --accent-gradient: linear-gradient(135deg, #3b82f6, #4f46e5);
         --accent-gradient-hover: linear-gradient(135deg, #60a5fa, #6366f1);
@@ -76,7 +79,7 @@
         overflow-x: hidden;
       }
 
-      /* --- Mobile Header & Overlay --- */
+      /* Mobile Header & Overlay */
       .mobile-header {
         display: none;
         position: fixed;
@@ -130,7 +133,7 @@
         opacity: 1;
       }
 
-      /* --- Sidebar Styles --- */
+      /* Sidebar Styles */
       .sidebar {
         width: var(--sidebar-width);
         background-color: var(--sidebar-bg);
@@ -171,7 +174,7 @@
       .nav-link {
         display: flex;
         align-items: center;
-        padding: 10px 12px 10px 9px;
+        padding: 11px 14px;
         color: var(--text-muted);
         text-decoration: none;
         border-radius: var(--radius-md);
@@ -193,8 +196,17 @@
         border-left-color: var(--primary);
         color: var(--text-main);
       }
+      .nav-item#nav-sanatana-btn.active .nav-link {
+        background: linear-gradient(
+          90deg,
+          rgba(245, 158, 11, 0.18) 0%,
+          rgba(245, 158, 11, 0) 100%
+        );
+        border-left-color: var(--accent-gold);
+        color: #fef08a;
+      }
 
-      /* --- Main Content Area --- */
+      /* Main Content Area */
       .main-content {
         flex: 1;
         padding: 30px 40px;
@@ -216,7 +228,7 @@
         color: var(--text-main);
       }
 
-      /* --- Auth & Controls --- */
+      /* Auth & Controls */
       #auth-container {
         display: flex;
         align-items: center;
@@ -321,6 +333,7 @@
         color: #64748b;
         cursor: not-allowed;
         box-shadow: none;
+        transform: none;
       }
 
       .btn-secondary {
@@ -331,7 +344,7 @@
         box-shadow: var(--glow-secondary);
       }
 
-      /* --- Gallery Grid Layout --- */
+      /* Gallery Grid Layout */
       #image-gallery {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -393,7 +406,7 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       }
 
-      /* --- Cinematic Popup Modal --- */
+      /* Cinematic Modal */
       .modal {
         display: none;
         position: fixed;
@@ -434,11 +447,11 @@
         font-size: 28px;
         cursor: pointer;
         font-weight: 400;
-        z-index: 1010; /* Ensures it sits above the iframe */
+        z-index: 1010;
         transition: all 0.2s ease;
       }
       .close-btn:hover {
-        background: rgba(239, 68, 68, 0.9); /* Red hover effect */
+        background: rgba(239, 68, 68, 0.9);
         color: white;
       }
       #media-frame {
@@ -448,10 +461,11 @@
         background-color: #000;
       }
 
-      /* --- Views & Games --- */
+      /* Views & Games */
       #view-overview,
       #view-game,
-      #view-daily {
+      #view-daily,
+      #view-sanatana {
         display: none;
       }
 
@@ -473,9 +487,8 @@
         margin-top: 5px;
       }
 
-      /* Touch controls for mobile snake */
       .mobile-dpad {
-        display: none; /* hidden on desktop */
+        display: none;
         flex-direction: column;
         align-items: center;
         gap: 10px;
@@ -557,7 +570,255 @@
         color: white;
       }
 
-      /* --- Responsive Mobile Media Queries --- */
+      /* ==============================================================
+         SANATANA DHARMA & HANUMAN CHALISA VIEWER STYLES
+         ============================================================== */
+      .sanatana-container {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      .verse-center-card {
+        background: linear-gradient(
+          180deg,
+          rgba(30, 41, 59, 0.95) 0%,
+          rgba(15, 23, 42, 0.98) 100%
+        );
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 38px 28px;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+      .verse-center-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent-gold),
+          transparent
+        );
+      }
+
+      .verse-badge {
+        display: inline-block;
+        padding: 4px 14px;
+        background: var(--accent-gold-soft);
+        color: #fde047;
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+
+      .verse-devanagari {
+        font-family: "Noto Serif Devanagari", serif;
+        font-size: 1.95rem;
+        font-weight: 700;
+        line-height: 1.7;
+        color: #f8fafc;
+        margin: 10px 0;
+        letter-spacing: 0.02em;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      }
+
+      .verse-transliteration {
+        font-size: 1.08rem;
+        font-style: italic;
+        color: #cbd5e1;
+        margin-top: 14px;
+        line-height: 1.6;
+      }
+
+      .exegesis-wrapper {
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .exegesis-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 26px;
+        box-shadow: var(--shadow-sm);
+        transition: border-color 0.2s ease;
+      }
+      .exegesis-section:hover {
+        border-color: var(--border-hover);
+      }
+
+      .exegesis-header {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #60a5fa;
+        margin-top: 0;
+        margin-bottom: 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 10px;
+        letter-spacing: -0.01em;
+      }
+      .exegesis-header.gold-accent {
+        color: #f59e0b;
+      }
+
+      .exegesis-meaning-box {
+        font-size: 1.06rem;
+        line-height: 1.8;
+        color: #f1f5f9;
+        font-style: italic;
+        border-left: 3px solid var(--accent-gold);
+        padding-left: 18px;
+        margin: 0;
+      }
+
+      .exegesis-text {
+        font-size: 0.96rem;
+        line-height: 1.8;
+        color: #cbd5e1;
+        margin: 0 0 12px 0;
+      }
+      .exegesis-text:last-child {
+        margin-bottom: 0;
+      }
+
+      .shastra-quote-box {
+        background: var(--card-sub-bg);
+        border-left: 3px solid #3b82f6;
+        padding: 16px 20px;
+        border-radius: 4px;
+        margin: 14px 0;
+      }
+      .shastra-sanskrit {
+        font-family: "Noto Serif Devanagari", serif;
+        font-size: 1.05rem;
+        color: #e2e8f0;
+        line-height: 1.7;
+        margin-bottom: 6px;
+      }
+      .shastra-ref {
+        font-size: 0.8rem;
+        color: var(--primary-hover);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 6px;
+      }
+      .shastra-trans {
+        font-size: 0.92rem;
+        color: #94a3b8;
+        font-style: italic;
+        line-height: 1.6;
+      }
+
+      .term-item {
+        margin-bottom: 14px;
+      }
+      .term-item:last-child {
+        margin-bottom: 0;
+      }
+      .term-title {
+        font-weight: 600;
+        color: #93c5fd;
+        margin-bottom: 2px;
+      }
+
+      /* Synthesis Comparison Card Layout */
+      .synthesis-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 14px;
+      }
+      .synthesis-col {
+        background: var(--card-sub-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 16px;
+      }
+      .synthesis-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #fde047;
+        margin-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        padding-bottom: 6px;
+      }
+      .synthesis-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #cbd5e1;
+      }
+      .synthesis-list li {
+        margin-bottom: 6px;
+      }
+
+      /* Verse Navigation Bar at Bottom */
+      .verse-nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: 16px 24px;
+        margin-top: 32px;
+        box-shadow: var(--shadow-md);
+      }
+      .nav-arrow-btn {
+        font-weight: 600;
+        padding: 10px 22px;
+        background: var(--accent-gradient);
+        border-radius: var(--radius-md);
+        border: none;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .nav-arrow-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: var(--glow-primary);
+      }
+      .nav-arrow-btn:disabled {
+        background: var(--border-color);
+        color: #64748b;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .verse-tracker-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .tracker-count {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+      .tracker-sub {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      /* Responsive Media Queries */
       @media (max-width: 1200px) {
         .games-grid {
           grid-template-columns: repeat(3, 1fr);
@@ -567,15 +828,16 @@
         .games-grid {
           grid-template-columns: repeat(2, 1fr);
         }
+        .synthesis-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 768px) {
-        /* Enable mobile header */
         .mobile-header {
           display: flex;
         }
 
-        /* Sidebar becomes off-canvas */
         .sidebar {
           transform: translateX(-100%);
           padding-top: 20px;
@@ -584,17 +846,15 @@
           transform: translateX(0);
         }
         .sidebar-brand {
-          display: none; /* hidden since it's in mobile header */
+          display: none;
         }
 
-        /* Main content adjustments */
         .main-content {
           margin-left: 0;
           margin-top: 60px;
-          padding: 20px;
+          padding: 20px 14px;
         }
 
-        /* Grid and Controls flow adjustments */
         #image-gallery {
           grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
           gap: 10px;
@@ -614,7 +874,27 @@
           box-sizing: border-box;
         }
 
-        /* Fix modal close button for smaller screens */
+        .verse-devanagari {
+          font-size: 1.45rem;
+          line-height: 1.6;
+        }
+        .verse-transliteration {
+          font-size: 0.95rem;
+        }
+        .verse-center-card {
+          padding: 24px 16px;
+        }
+        .exegesis-section {
+          padding: 20px 16px;
+        }
+        .verse-nav-bar {
+          padding: 12px 14px;
+        }
+        .nav-arrow-btn {
+          padding: 8px 16px;
+          font-size: 0.85rem;
+        }
+
         .close-btn {
           right: 10px;
           top: 10px;
@@ -623,7 +903,6 @@
           height: 35px;
         }
 
-        /* Show mobile touch D-Pad when game is active */
         #view-game.active-game .mobile-dpad {
           display: flex;
         }
@@ -649,12 +928,15 @@
     </header>
     <div class="mobile-overlay" id="mobile-overlay"></div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar (Emoji-Free Navigation) -->
     <aside class="sidebar" id="sidebar-nav" style="display: none">
       <div class="sidebar-brand">Daily Source</div>
       <ul class="nav-menu">
         <li class="nav-item active" id="nav-overview-btn">
           <a class="nav-link">Overview</a>
+        </li>
+        <li class="nav-item" id="nav-sanatana-btn">
+          <a class="nav-link">Sanatana Dharma</a>
         </li>
         <li class="nav-item" id="nav-game-btn">
           <a class="nav-link">Snake Game</a>
@@ -667,6 +949,7 @@
 
     <!-- Main Content Area -->
     <main class="main-content" id="main-content" style="display: none">
+      <!-- 1. Overview View -->
       <div id="view-overview">
         <h1>Overview</h1>
         <div class="controls">
@@ -687,6 +970,7 @@
         </div>
       </div>
 
+      <!-- 2. Snake Game View -->
       <div id="view-game">
         <h1>Snake Game</h1>
         <div class="controls">
@@ -718,6 +1002,7 @@
         </div>
       </div>
 
+      <!-- 3. Daily Games View -->
       <div id="view-daily">
         <h1>Daily Games</h1>
         <p style="color: var(--text-muted); margin-bottom: 25px">
@@ -725,8 +1010,54 @@
         </p>
         <div class="games-grid" id="games-grid"></div>
       </div>
+
+      <!-- 4. Sanatana Dharma View -->
+      <div id="view-sanatana">
+        <h1>Sanatana Dharma</h1>
+        <div class="controls">
+          <select id="scripture-select">
+            <option value="hanuman-chalisa" selected>Hanuman Chalisa</option>
+          </select>
+          <select id="verse-quick-jump">
+            <!-- Populated dynamically via JS -->
+          </select>
+        </div>
+
+        <div class="sanatana-container">
+          <!-- Center Verse Card -->
+          <div class="verse-center-card" id="verse-center-card">
+            <span class="verse-badge" id="verse-type-badge">Chaupai 5</span>
+            <div class="verse-devanagari" id="verse-devanagari-text">
+              हाथ बज्र औ ध्वजा बिराजै ।<br />काँधे मूँज जनेऊ साजै ॥
+            </div>
+            <div class="verse-transliteration" id="verse-translit-text">
+              Hātha bajra au dhvajā birājai |<br />Kāṅdhe mūñja jane’ū sājai ||
+            </div>
+          </div>
+
+          <!-- Left-Aligned Structured Meaning & Exegesis -->
+          <div class="exegesis-wrapper" id="exegesis-container">
+            <!-- Populated dynamically via JS -->
+          </div>
+
+          <!-- Bottom Sequential Navigation -->
+          <div class="verse-nav-bar">
+            <button class="nav-arrow-btn" id="btn-prev-verse">
+              ← Previous
+            </button>
+            <div class="verse-tracker-info">
+              <span class="tracker-count" id="verse-counter-text"
+                >Verse 7 of 43</span
+              >
+              <span class="tracker-sub">Use Arrow Keys (← / →)</span>
+            </div>
+            <button class="nav-arrow-btn" id="btn-next-verse">Next →</button>
+          </div>
+        </div>
+      </div>
     </main>
 
+    <!-- Modal for Media -->
     <div id="media-modal" class="modal">
       <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -741,7 +1072,7 @@
       let tokenClient;
       let accessToken = null;
 
-      // --- Mobile Menu Logic ---
+      // Mobile Menu Logic
       const sidebar = document.getElementById("sidebar-nav");
       const overlay = document.getElementById("mobile-overlay");
       const menuToggle = document.getElementById("menu-toggle");
@@ -758,32 +1089,1298 @@
       menuToggle.addEventListener("click", toggleMenu);
       overlay.addEventListener("click", closeMenu);
 
-      // --- Nav Logic ---
+      // Nav Logic (No Emojis)
       const navOverviewBtn = document.getElementById("nav-overview-btn");
       const navGameBtn = document.getElementById("nav-game-btn");
       const navDailyBtn = document.getElementById("nav-daily-btn");
+      const navSanatanaBtn = document.getElementById("nav-sanatana-btn");
+
       const viewOverview = document.getElementById("view-overview");
       const viewGame = document.getElementById("view-game");
       const viewDaily = document.getElementById("view-daily");
+      const viewSanatana = document.getElementById("view-sanatana");
 
       function switchTab(activeBtn, activeView) {
-        [navOverviewBtn, navGameBtn, navDailyBtn].forEach((b) =>
+        [navOverviewBtn, navGameBtn, navDailyBtn, navSanatanaBtn].forEach((b) =>
           b.classList.remove("active"),
         );
-        [viewOverview, viewGame, viewDaily].forEach(
+        [viewOverview, viewGame, viewDaily, viewSanatana].forEach(
           (v) => (v.style.display = "none"),
         );
 
         activeBtn.classList.add("active");
         activeView.style.display = "block";
-        closeMenu(); // Auto close sidebar on mobile when navigating
+        closeMenu();
       }
 
       navOverviewBtn.onclick = () => switchTab(navOverviewBtn, viewOverview);
       navGameBtn.onclick = () => switchTab(navGameBtn, viewGame);
       navDailyBtn.onclick = () => switchTab(navDailyBtn, viewDaily);
+      navSanatanaBtn.onclick = () => {
+        switchTab(navSanatanaBtn, viewSanatana);
+        renderCurrentVerse();
+      };
 
-      // --- Games List ---
+      // ==============================================================
+      // EXHAUSTIVE SHALISA DATASET: UNCOMPROMISING 5-PILLAR EXEGESIS
+      // ==============================================================
+      const chalisaData = [
+        {
+          id: 1,
+          type: "Introductory Doha 1",
+          devanagari:
+            "श्रीगुरु चरन सरोज रज निज मनु मुकुरु सुधारि ।\nबरनउँ रघुबर बिमल जसु जो दायकु फल चारि ॥",
+          translit:
+            "Śrī-guru-caraṇa-saroja-raja nija manu mukuru sudhāri |\nVaraṇau raghubara bimala jasu jo dāyaku phala cāri ||",
+          meaning:
+            "Having meticulously cleansed the reflective surface of my mind with the sacred pollen radiating from the lotus feet of the venerable Guru, I articulate the unblemished, sovereign glory of Sri Raghuvara, which directly bestows the fourfold ends of cosmic and human existence (Dharma, Artha, Kāma, and Mokṣa).",
+          etymology: [
+            {
+              term: "Śrī-guru-caraṇa-saroja-raja (Sanskrit: Śrī-guru-caraṇa-saroja-rajas)",
+              desc: "Śrī signifies both primordial cosmic effulgence (Parā-Śakti) and institutional authority. The Guru operates on three concurrent planes: the physical preceptor (Swami Naraharidas), the paramparaic founder (Jagadguru Ramanandacharya), and Lord Shiva (Ādi-Guru). Raja denotes not coarse earth, but the subtle, fragrant pollen (parāga) residing at the center of the lotus. In classical Indian epistemology (Nyāya-Vaiśeṣika and Sāṅkhya), the microscopic pollen cleanses the psychological repository (citta) of the veil of ignorance (āvaraṇa) and mental restlessness (vikṣepa).",
+            },
+            {
+              term: "Nija Manu Mukuru (Sanskrit: Nija Manas-Mukura)",
+              desc: "Manu is Awadhi for manas (mind/internal organ of perception). Mukuru represents a polished bronze mirror. A metal mirror clouded by soot cannot reflect the sun; similarly, a mind encrusted with worldly attachments cannot perceive or articulate the transcendental Godhead.",
+            },
+            {
+              term: "Phala Cāri (Sanskrit: Caturvidha-Puruṣārtha)",
+              desc: "The quadruplicate teleology of Sanatan civilization: Dharma (cosmic ethical duty), Artha (material and economic sovereignty), Kāma (sublimated desire and aesthetic harmony), and Mokṣa (ontological liberation).",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "यथैव बिम्बं मृदयोपलिप्तं तेजोमयं भ्राजते तत्सुधान्तम् ।\nतद्वात्मतत्त्वं प्रसमीक्ष्य देही एकः कृतार्थो भवते वीतशोकः ॥",
+            ref: "Śvetāśvatara Upaniṣad (Chapter 2, Verse 14)",
+            trans:
+              "Just as an unrefined metal disc smeared with soil and impurities shines with blinding brilliance once thoroughly polished with fine substances, even so does the embodied soul, upon perceiving the pristine reality of the Self, become completely unified, liberated from grief, and fulfilled in purpose.",
+          },
+          philosophy: {
+            summary:
+              "In classical Advaitic psychology, the mind is inherently non-luminous and insentient (jaḍa), mimicking sentience via reflected consciousness (Cidābhāsa). Surrender to the Guru's lineage clears the triple impurities: gross behavioral vices (mala), mental oscillation (vikṣepa), and the primal veil (āvaraṇa). Once this cognitive restoration occurs, aligning with cosmic law (Ṛta) effortlessly produces the four life-purposes without egoic struggle.",
+            leftTitle: "Cognitive Hygiene (Citta-Śuddhi)",
+            leftPoints: [
+              "Clearing the mirror of the internal organ (Manas).",
+              "Subordinating personal ego to the preceptor's lineage.",
+              "Removing cognitive bias and sensory distortions.",
+            ],
+            rightTitle: "Teleological Fruition (Puruṣārtha)",
+            rightPoints: [
+              "Dharma: Grounding action in cosmic truth (Ṛta).",
+              "Artha: Ethical material self-sufficiency.",
+              "Mokṣa: Freedom from physical and existential subjugation.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "In Kautilya’s Arthaśāstra (Book 1, Chapter 7), the foundation of all sovereign statecraft (Rāja-nīti) begins with Indriya-jaya—the systematic conquering of the ruler's sensory and cognitive organs through association with wise elders (Vṛddha-samyoga). A ruler whose cognitive mirror is clouded by flattery, fear, or greed cannot accurately evaluate the four classical policies (Sāma, Dāna, Bheda, Daṇḍa).",
+            economy:
+              "Clear perception precedes political mobilization. Before resistance can be organized against an occupying imperial power, society's intellectual leaders must restore absolute clarity, refusing to allow imperial propaganda or internal defeatism to warp their judgment.",
+          },
+          history:
+            "In 16th-century Varanasi, the scholastic establishment was locked in an existential crisis. Orthodox scholars had retreated into an insular defense of Sanskrit scholasticism, hoarding sacred learning. Tulsidas established himself at Assi Ghat and opened this work in accessible literary Awadhi, democratizing cognitive purification for all social classes and initiating a grassroots cultural resurgence.",
+        },
+        {
+          id: 2,
+          type: "Introductory Doha 2",
+          devanagari:
+            "बुद्धिहीन तनु जानिके सुमिरौ पवन-कुमार ।\nबल बुद्धि बिद्या देहु मोहि हरहु कलेस बिकार ॥",
+          translit:
+            "Budhi-hīna tanu jānike sumirau pavana-kumāra |\nBala budhi bidyā dehu mohi harahu kalesa bikāra ||",
+          meaning:
+            "Fully recognizing my constitutional lack of discriminative intellect and the mortal frailty of this physical vessel, I intensely meditate upon the Son of the Wind. Bestow upon me martial strength, sharp intellect, and sacred wisdom; and completely eradicate my structural afflictions and internal distortions.",
+          etymology: [
+            {
+              term: "Budhi-hīna Tanu Jānike",
+              desc: "Calculated spiritual humility (Kārpanya), explicitly acknowledging the vulnerability of the material physical vessel and the limitations of the unaided human intellect.",
+            },
+            {
+              term: "Bala - Budhi - Bidyā Triad",
+              desc: "Bala: raw kinetic power and somatic endurance. Budhi (Buddhi): discriminative strategic intellect (Viveka). Bidyā (Vidyā): metaphysical gnosis, systemic shastric learning, and technical mastery of statecraft.",
+            },
+            {
+              term: "Kalesa & Bikāra (Kleśa & Vikāra)",
+              desc: "Kalesa denotes Patanjali’s five existential afflictions: Avidyā (ignorance), Asmitā (egoism), Rāga (attachment), Dveṣa (aversion), and Abhiniveśa (fear of death). Bikāra denotes the six internal distortions (Ariṣaḍvarga): lust, anger, greed, infatuation, pride, and envy.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "अथ हेममासन्यं प्राणमूचुस्त्वं न उद्गायेति तथेति तेभ्य एष प्राण उदगायत्... स यथाश्मानमृत्वा लोष्टो विध्वंसेतैवमेव विध्वंसमाना विष्वञ्चो विनेशुः ॥",
+            ref: "Bṛhadāraṇyaka Upaniṣad (Chapter 1, Brāhmaṇa 3, Verses 7–9)",
+            trans:
+              "Then the gods addressed the central breath: 'Chant the liturgy for us.' Just as an earthen clod striking against an adamantine rock is shattered to dust, even so did the forces of darkness strike against the vital breath (Mukhya-prāṇa) and shatter in all directions.",
+          },
+          philosophy: {
+            summary:
+              "Kinetic power (Bala) without discriminative intellect (Buddhi) degenerates into brute violence. Intellect divorced from martial force is trampled by tyranny. Sacred wisdom (Vidyā) provides the ethical compass that prevents intellect and strength from devolving into narcissism. Eradicating Abhiniveśa (fear of death) provides the psychological invulnerability required to withstand imperial coercion.",
+            leftTitle: "The Sovereign Triad",
+            leftPoints: [
+              "Bala: Martial vigor that overcomes inertia.",
+              "Buddhi: Strategic discernment directing force.",
+              "Vidyā: Sacred gnosis preventing hubris.",
+            ],
+            rightTitle: "Psychological De-conditioning",
+            rightPoints: [
+              "Eradication of Patanjali's five Kleśas.",
+              "Overcoming the existential dread of mortality.",
+              "Harmonizing pranic flow with cosmic resilience.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "In Kāmandakīya Nītisāra (Section 4), political authority requires the integration of the three sovereign strengths (Śakti-traya): Utsāha-śakti (kinetic valor and momentum), Prabhā-śakti (treasury and military equipment), and Mantra-śakti (strategic deliberation and intellect). Kāmandaka asserts that intelligence must guide kinetic momentum.",
+            economy:
+              "Under imperial subjugation, an unarmed population faces psychological paralysis. Tulsidas structures the prayer of an occupied people around physical strength, intelligence, and high knowledge—the foundational assets needed to reconstruct community sovereignty.",
+          },
+          history:
+            "In late 16th-century North India, military setbacks had fostered widespread fatalism (daiva-vāda), with people attributing oppression to unavoidable cosmic cycles. Tulsidas fought this defeatism by institutionalizing wrestling guilds (Akhāḍās) throughout Varanasi, giving physical reality to the prayer for Bala and Buddhi.",
+        },
+        {
+          id: 3,
+          type: "Chaupai 1",
+          devanagari: "जय हनुमान ज्ञान गुन सागर ।\nजय कपीस तिहुँ लोक उजागर ॥",
+          translit:
+            "Jaya hanumāna jñāna guṇa sāgara |\nJaya kapīsa tihu loka ujāgara ||",
+          meaning:
+            "Victory unto you, O Hanuman, inexhaustible ocean of sacred gnosis and supreme ethical virtues! Victory unto the Sovereign of the Kapis, whose radiant effulgence illuminates the three cosmic realms!",
+          etymology: [
+            {
+              term: "Jaya",
+              desc: "Derived from the root 'ji' (to conquer, to overcome entropy, to assert cosmic order). A victory chant declaring the triumph of cosmic law over systemic disorder.",
+            },
+            {
+              term: "Jñāna Guṇa Sāgara",
+              desc: "Jñāna represents both metaphysical realization (Brahma-jñāna) and empirical statecraft. Guṇa signifies the sixty-four traditional virtues of Sanatan ethics. Sāgara denotes an ocean: boundless, deep, self-replenishing, and unmoved by surface agitation.",
+            },
+            {
+              term: "Kapīsa (Kapi + Īśa)",
+              desc: "Sovereign master of dynamic kinetic forces. Etymologically rooted in 'kam' (light, breath, water) and 'pi' (to protect, drink, invigorate).",
+            },
+            {
+              term: "Tihu Loka Ujāgara (Triloka-Ujjavala)",
+              desc: "Illuminating the terrestrial (Bhūḥ), atmospheric (Bhuvaḥ), and celestial (Svaḥ) realms with ethical and spiritual radiance.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "नानृग्वेदविनीतस्य नाऋग्वेदधारिणः । नासामवेदविदुषः शक्यमेवं विभाषितुम् ॥\nनूनं व्याकरणं कृत्स्नमनेन बहुधा श्रुतम् । बहु व्याहरतानेन न किञ्चिदपशब्दितम् ॥",
+            ref: "Vālmīki Rāmāyaṇa (Kiṣkindhā Kāṇḍa, Sarga 3, Verses 28–29)",
+            trans:
+              "None could articulate words with such immaculate phrasing without mastering the Ṛgveda, Yajurveda, and Sāmaveda. Verily, the entire science of Sanskrit Grammar has been assimilated by him, for throughout this exhaustive dialogue, not a single grammatical solecism has escaped his lips.",
+          },
+          philosophy: {
+            summary:
+              "The ocean (Sāgara) represents divine plenitude (Pūrṇatva). Unlike worldly pride, which is fragmented and arrogant, Hanuman's wisdom is paired with ethical conduct (Guṇa). As the master of dynamic vitality (Kapīsa), he directs raw pranic impulses toward the preservation of cosmic law.",
+            leftTitle: "Brahma-Tejas (Spiritual Depth)",
+            leftPoints: [
+              "Mastery over the four Vedas and Sanskrit grammar.",
+              "Oceanic serenity that cannot be unsettled.",
+              "Illumination of the three planes of consciousness.",
+            ],
+            rightTitle: "Kṣātra-Vīrya (Dynamic Authority)",
+            rightPoints: [
+              "Kapīsa: Sovereign commander of dynamic forces.",
+              "Channeling vital energy into dharmic protection.",
+              "Deterrence radiating through uncompromised character.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "In Kautilya’s Arthaśāstra (Book 1, Chapter 16), the plenipotentiary ambassador (Nisṛṣṭārtha) must possess high intellect, vast knowledge, and spotless character. Because Hanuman embodies these qualities, enemy courts cannot deceive, bribe, or intimidate him.",
+            economy:
+              "A society facing external pressure must ensure its leaders possess deep knowledge rather than mere emotional enthusiasm. Hanuman is saluted first as an ocean of knowledge, establishing education as the foundation of defense.",
+          },
+          history:
+            "In 16th-century India, sacred texts were closely guarded by traditional elites, and forest-dwelling communities were often marginalized. By presenting a forest hero as the supreme ocean of Vedic wisdom, Tulsidas challenged caste gatekeeping and united the community behind an inclusive ideal.",
+        },
+        {
+          id: 4,
+          type: "Chaupai 2",
+          devanagari: "राम दूत अतुलित बल धामा ।\nअंजनि-पुत्र पवनसुत नामा ॥",
+          translit:
+            "Rāma dūta atulita bala dhāmā |\nAñjani-putra pavanasuta nāmā ||",
+          meaning:
+            "The foremost ambassador of Sri Rama, the unassailable fortress of immeasurable martial power; celebrated as the heroic son of Anjani, and bearing the cosmic designation of the Son of the Wind.",
+          etymology: [
+            {
+              term: "Rāma Dūta",
+              desc: "The total dedication of personal power to the divine mission. Hanuman acts with the full sovereign authority of Sri Rama, maintaining complete diplomatic accreditation.",
+            },
+            {
+              term: "Atulita Bala Dhāmā",
+              desc: "Atulita: immeasurable, beyond calibration. Dhāma: a fortified sanctuary, abode, or reservoir. Hanuman is not merely strong; he is the structural storehouse of kinetic and spiritual force.",
+            },
+            {
+              term: "Añjani-Putra / Pavanasuta",
+              desc: "Unites maternal groundedness and penance (Anjana) with paternal atmospheric dynamism and vitality (Pavana, the cosmic life-breath).",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "तत्र ह वाव भगवान् प्रियतमो निजजनस्य महापुरुषः... श्रीहनूमता सहित आस्ते ॥",
+            ref: "Śrīmad Bhāgavata Purāṇa (Skandha 5, Adhyāya 19, Verse 11)",
+            trans:
+              "In that sacred realm, the Supreme Personality of Godhead remains eternally accompanied by Sri Hanuman, who is perpetually engaged in flawless, unbroken service.",
+          },
+          philosophy: {
+            summary:
+              "Unchecked power leads to tyranny, as seen in Ravana. In Hanuman, immeasurable force is housed within a humble servant of truth (Rāma dūta). Force is stripped of self-indulgence and dedicated wholly to the preservation of cosmic order.",
+            leftTitle: "Somatic Potential",
+            leftPoints: [
+              "Atulita Bala: Boundless kinetic reserve.",
+              "Dhāma: Unshakeable somatic container.",
+              "Terrestrial endurance inherited from Anjana.",
+            ],
+            rightTitle: "Ethical Dedication",
+            rightPoints: [
+              "Rāma Dūta: Power dedicated to righteousness.",
+              "Ego subordinated to the cosmic mission.",
+              "Dynamic movement guided by the life-breath (Pavana).",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "Under classical diplomatic law (Dūta-Dharma), an envoy must command personal deterrence. When entering hostile territory, Hanuman's status as a fortress of strength prevents the enemy from arbitrarily executing him, forcing them to observe diplomatic protocols.",
+            economy:
+              "By holding up devotion to a higher moral order, Tulsidas reminded local rulers—many of whom had compromised their autonomy for imperial titles—that true honor lies in serving eternal righteousness rather than transient courts.",
+          },
+          history:
+            "During Akbar’s administrative centralization, local rulers were integrated into the imperial mansabdari system. Tulsidas offered a contrasting ideal: true nobility lies in serving the timeless King of Righteousness rather than earthly courts.",
+        },
+        {
+          id: 5,
+          type: "Chaupai 3",
+          devanagari: "महाबीर बिक्रम बजरंगी ।\nकुमति निवार सुमति के संगी ॥",
+          translit:
+            "Mahābīra bikrama bajarraṅgī |\nKumati nivāra sumati ke saṅgī ||",
+          meaning:
+            "O Supreme Hero of dynamic valor, whose limbs possess the adamantine invulnerability of the thunderbolt! Eradicate the corrupt, self-destructive intellect within us, and grant fellowship to pure, luminous understanding.",
+          etymology: [
+            {
+              term: "Mahābīra (Mahāvīra)",
+              desc: "A supreme warrior who integrates physical fearlessness with ascetic self-restraint and moral duty.",
+            },
+            {
+              term: "Bikrama (Vikrama)",
+              desc: "Decisive forward momentum; heroic action that shatters enemy defenses, evocative of Vishnu's cosmic stride (Trivikrama).",
+            },
+            {
+              term: "Bajarraṅgī (Vajrāṅgī)",
+              desc: "Vajra (adamantine diamond/thunderbolt) + Aṅga (limbs). A physiology impervious to physical blows and metaphysical attacks.",
+            },
+            {
+              term: "Kumati Nivāra / Sumati Ke Saṅgī",
+              desc: "Kumati: corrupt, cynical thinking; nivāra: to dismantle and expel. Sumati: dharmic discernment; saṅgī: cultivator and protector.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "न शस्त्रेण वधोऽस्य स्यात् समरेषु कदाचन । वज्रस्य च प्रभावेन नास्य ग्लानिर्भविष्यति ॥",
+            ref: "Vālmīki Rāmāyaṇa (Uttara Kāṇḍa, Sarga 36, Verse 15)",
+            trans:
+              "Never shall he be slain by any weapon upon the field of battle! By the power of the Vajra, no exhaustion or physical injury shall ever overcome him.",
+          },
+          philosophy: {
+            summary:
+              "Physical invulnerability (Vajrāṅga) must be paired with cognitive purity. Physical force without wisdom degenerates into brutality, while wisdom without physical courage remains helpless before armed coercion. Hanuman unites bodily strength with intellectual clarity.",
+            leftTitle: "Somatic Invulnerability",
+            leftPoints: [
+              "Vajrāṅga: Adamantine physical resistance.",
+              "Vikrama: Unstoppable kinetic momentum.",
+              "Transmuting vital energy into somatic armor.",
+            ],
+            rightTitle: "Cognitive Discrimination",
+            rightPoints: [
+              "Kumati Nivāra: Dismantling cynicism and corruption.",
+              "Sumati Saṅgī: Cultivating principled wisdom.",
+              "Aligning the intellect with cosmic balance.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "In Kautilya’s Arthaśāstra (Book 1, Chapter 15), internal ministerial corruption (Mantra-doṣa) is more destructive to a state than foreign invasion. A ruler must remove corrupt advisors (Kumati-nivāraṇa) and surround the administration with principled strategists (Sumati-saṅga).",
+            economy:
+              "Moral courage is an essential civic asset. When leaders compromise their principles for short-term gain, institutions crumble from within. Rebuilding society requires both physical backbone and clear moral thinking.",
+          },
+          history:
+            "Addressed the moral exhaustion of local elites who accommodated foreign rule for immediate personal gain. Tulsidas identified this as a failure of intellect (Kumati), urging society to recover its principles and inner strength.",
+        },
+        {
+          id: 6,
+          type: "Chaupai 4",
+          devanagari: "कंचन बरन बिराज सुबेसा ।\nकानन कुंडल कुंचित केसा ॥",
+          translit:
+            "Kañcana baraṇa birāja subesā |\nKānana kuṇḍala kuñcita kesā ||",
+          meaning:
+            "Radiating with a brilliant golden complexion, adorned in dignified, austere attire; wearing shining ear-ornaments, with your lustrous dark hair curling in yogic beauty.",
+          etymology: [
+            {
+              term: "Kañcana Baraṇa (Kāñcana-Varṇa)",
+              desc: "A radiant golden complexion reflecting the internal transmutation of vital energy into spiritual brilliance (Ojas and Tejas) through Brahmacharya.",
+            },
+            {
+              term: "Birāja Subesā (Virāja Suveṣa)",
+              desc: "Dressed with noble simplicity. Suveṣa denotes austere, dignified attire suitable for an ascetic warrior, free from ostentation.",
+            },
+            {
+              term: "Kānana Kuṇḍala",
+              desc: "Earrings received from Surya, signifying constant receptivity to sacred sound (Śabda-Brahman) and shastric wisdom.",
+            },
+            {
+              term: "Kuñcita Kesā",
+              desc: "Coiled, lustrous locks representing yogic discipline and the mastery of vital energies.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "तप्तकाञ्चनवर्णाभो रक्तवक्त्रो महाकपिः । तेजसा सूर्यसङ्काशः...",
+            ref: "Vālmīki Rāmāyaṇa (Sundara Kāṇḍa, Sarga 1, Verse 60)",
+            trans:
+              "Blazing like molten gold, with radiant features, that great warrior shone with the blinding brilliance of the sun.",
+          },
+          philosophy: {
+            summary:
+              "Inner discipline produces outward dignity. Transmuting vital energy through self-restraint results in physical vitality and inner peace, demonstrating that ascetic simplicity carries far greater presence than superficial luxury.",
+            leftTitle: "Ascetic Radiance (Ojas)",
+            leftPoints: [
+              "Golden hue born of strict Brahmacharya.",
+              "Simplicity of attire reflecting inner sovereignty.",
+              "Mastery of life-energies reflected in physical poise.",
+            ],
+            rightTitle: "Receptivity to Truth",
+            rightPoints: [
+              "Earrings symbolizing attentive listening to wisdom.",
+              "Immunity to courtly vanity and flattery.",
+              "Harmonizing physical vigor with contemplative calm.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "In diplomacy, an ambassador’s personal presence and poise project stability and strength. Dignified simplicity inspires trust, whereas excessive luxury often hides insecurity.",
+            economy:
+              "Contrasted the lavish brocades of imperial courts with the natural dignity of an ascetic hero, demonstrating that true authority cannot be manufactured through expensive displays of wealth.",
+          },
+          history:
+            "While imperial courtiers flaunted silk and gold obtained through courtly favors, Tulsidas highlighted the radiant dignity of an ascetic hero, showing that authentic moral standing comes from character rather than courtly fashion.",
+        },
+        {
+          id: 7,
+          type: "Chaupai 5",
+          devanagari: "हाथ बज्र औ ध्वजा बिराजै ।\nकाँधे मूँज जनेऊ साजै ॥",
+          translit:
+            "Hātha bajra au dhvajā birājai |\nKāṅdhe mūñja jane’ū sājai ||",
+          meaning:
+            "In your hands shine resplendently the thunderbolt-like weapon and the sacred victory banner of righteousness. Adorning your shoulder is the sacred thread spun from the austere Mūñja grass.",
+          etymology: [
+            {
+              term: "Hātha Bajra (Sanskrit: Hasta-Vajra)",
+              desc: "The adamantine weapon of Indra, but also the classical Vedic mace (Gadā) possessing the shattering density of the thunderbolt. Represents kinetic justice that destroys ignorance (Tamas) without compromise.",
+            },
+            {
+              term: "Au Dhvajā Birājai (Sanskrit: Dhvajā Virājate)",
+              desc: "The military banner of righteousness (Dharma-Dhvaja). It serves as the ideological center of the army, showing that force is dedicated to cosmic balance (Ṛta), never personal ambition.",
+            },
+            {
+              term: "Kāṅdhe Mūñja Jane’ū (Sanskrit: Skandhe Mauñjī-Yajñopavīta)",
+              desc: "Resting across the left shoulder is the sacred thread made from wild Mūñja grass (Saccharum munja), signifying Vedic student initiation (Brahmacharya) and triple debts (Ṛṇas) to the divine, sages, and society.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "मौञ्जी त्रिवृत्समा श्लक्ष्णा कार्या विप्रस्य मेखला । क्षत्रियस्य तु मौर्वी ज्या वैश्यस्य शाणतान्तवी ॥\nसन्ध्याकाले मनांसि तेषां चेतांसि च विजानताम् । नूनमेष्यति विक्रान्ता सन्ध्यामुपासितुं शुभा ॥",
+            ref: "Manusmṛti (2.42) & Vālmīki Rāmāyaṇa (Sundara Kāṇḍa 14.49–50)",
+            trans:
+              "The girdle and thread of an initiate pursuing sacred wisdom must be made of three smooth strands of Mūñja grass... While waiting in Lanka, Hanuman calculates Sita's movements by her strict adherence to Vedic twilight prayers (Sandhyopāsana).",
+          },
+          philosophy: {
+            summary:
+              "Martial power divorced from spiritual wisdom deteriorates into tyranny, while spiritual wisdom lacking the strength to defend itself is crushed by aggressive forces. Hanuman unites the warrior and the sage: the mace and banner represent deterrence, while the sacred grass cord represents self-control, learning, and non-attachment.",
+            leftTitle: "Kṣātra-Vīrya (Martial Force)",
+            leftPoints: [
+              "Right Hand: Bajra & Dhvajā.",
+              "Tactical deterrence and kinetic justice.",
+              "Defense of the vulnerable and uphold of Ṛta.",
+            ],
+            rightTitle: "Brahma-Tejas (Spiritual Wisdom)",
+            rightPoints: [
+              "Left Shoulder: Mūñja Jane’ū.",
+              "Moral restraint and adherence to cosmic law.",
+              "Sense-mastery and ascetic self-sufficiency.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "In Kautilya’s Arthaśāstra (Book 10, Chapter 6), the banner (Dhvajā) was the heart of battlefield command and communication. By holding the banner, Hanuman stands as the steady center of the righteous army. In the Mahābhārata, Arjuna placed Hanuman on his chariot banner (Kapi-Dhvaja) to demoralize opposing ranks.",
+            economy:
+              "By honoring Mūñja grass—which grows freely in nature without imperial sanction—Tulsidas proved that authentic moral authority is completely decentralized and cannot be taxed, regulated, or bought by the state.",
+          },
+          history:
+            "In 16th-century Varanasi, social divisions were rigid, and sacred knowledge was guarded behind exclusionary walls. Tulsidas’s assertion that a forest hero proudly wears the Mūñja thread challenged this insularity, proving that authentic authority is earned through penance, learning, and truth rather than birth alone.",
+        },
+        {
+          id: 8,
+          type: "Chaupai 6",
+          devanagari: "संकर सुवन केसरीनंदन ।\nतेज प्रताप महा जग बंदन ॥",
+          translit:
+            "Saṅkara suvana kesarī nandana |\nTeja pratāpa mahā jaga bandana ||",
+          meaning:
+            "The elevenfold incarnation of Lord Shiva and the joy of King Kesari; your fiery spiritual brilliance and sovereign majesty are revered throughout the entire universe.",
+          etymology: [
+            {
+              term: "Saṅkara Suvana (Śaṅkara-Sūnu)",
+              desc: "The direct avataric hypostasis of Lord Shiva, specifically the eleventh Rudra who manifests during cosmic emergencies to restore balance.",
+            },
+            {
+              term: "Kesarī Nandana",
+              desc: "The son of King Kesari, establishing his earthly, royal lineage within the forest realm.",
+            },
+            {
+              term: "Teja vs. Pratāpa",
+              desc: "Tejas: internal spiritual fire generated through penance (Tapas) and discipline. Pratāpa: outward majesty, fame, and deterrence that commands respect across the world.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "एकादशः स्मृतो रुद्रो हनूमान् कपिरूपधृत् । शम्भोराविरभूद् भूमौ रामकार्यं करिष्यतः ॥",
+            ref: "Śiva Purāṇa (Śatarudra-Saṃhitā, Adhyāya 20, Verse 7)",
+            trans:
+              "The eleventh Rudra appeared upon the earth in the form of Hanuman, specifically to execute the sacred enterprises of Sri Rama.",
+          },
+          philosophy: {
+            summary:
+              "Harmonizes Shaivism and Vaishnavism: Shiva takes birth as the devoted servant of Vishnu’s avatar, dissolving artificial sectarian walls through loving service. Power is derived from inner purity (Tejas), which naturally radiates as outer authority (Pratāpa).",
+            leftTitle: "Metaphysical Identity",
+            leftPoints: [
+              "Incarnation of the fierce eleventh Rudra.",
+              "Harmonizing Shaiva and Vaishnava currents.",
+              "Inner spiritual flame (Tejas) born of penance.",
+            ],
+            rightTitle: "Macrocosmic Presence",
+            rightPoints: [
+              "Pratāpa: Outward deterrence and majesty.",
+              "Universally revered across all three realms.",
+              "Dedicated entirely to cosmic protection.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "A sovereign must cultivate both inner moral credibility (Tejas) and outward military deterrence (Pratāpa). Authority that relies purely on outward force is fragile, while moral credibility without physical defense is vulnerable.",
+            economy:
+              "In late 16th-century India, sectarian disputes divided Hindu society. Tulsidas united the community by celebrating Hanuman as Shiva serving Vishnu, creating common ground across traditions.",
+          },
+          history:
+            "Varanasi was historically a center of Shaivite learning, often distinct from Vaishnava devotional groups. Tulsidas built a bridge between these traditions, uniting diverse groups behind a shared champion.",
+        },
+        {
+          id: 9,
+          type: "Chaupai 7",
+          devanagari: "बिद्यावान गुनी अति चातुर ।\nराम काज करिबे को आतुर ॥",
+          translit: "Bidyāvāna guṇī ati cātura |\nRāma kāja karibe ko ātura ||",
+          meaning:
+            "Master of the eighteen sacred sciences, brimming with noble virtues, impeccably sharp in intellect; perpetually poised and eager to execute the enterprises of Sri Rama.",
+          etymology: [
+            {
+              term: "Bidyāvāna (Vidyāvān)",
+              desc: "Possessing complete mastery over the four Vedas, the six Vedangas, diplomacy, and the shastric arts.",
+            },
+            {
+              term: "Guṇī Ati Cātura",
+              desc: "Guṇī: rich in the sixty-four traditional virtues; Cātura: strategically sharp, nimble in decision-making, and adept at realpolitik.",
+            },
+            {
+              term: "Rāma Kāja Karibe Ko Ātura",
+              desc: "Ātura indicates energetic readiness to act for the common good, free from bureaucratic hesitation or personal reluctance.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "बुद्धिः प्रभावस्तेजश्च दक्षत्वं नयविक्रमौ । वीर्यं शौर्यं च धैर्यं च हनूमति प्रतिष्ठिताः ॥",
+            ref: "Vālmīki Rāmāyaṇa (Sundara Kāṇḍa)",
+            trans:
+              "Intellect, majesty, energy, dexterity, statesmanship, courage, and patience are all permanently established in Hanuman.",
+          },
+          philosophy: {
+            summary:
+              "Wisdom must lead to purposeful action. Theory without execution is sterile, while action without learning is dangerous. Hanuman embodies the perfect harmony of deep scholarship and immediate, decisive execution.",
+            leftTitle: "Intellectual Mastery",
+            leftPoints: [
+              "Vidyāvān: Master of sacred and practical sciences.",
+              "Guṇī: Cultivation of ethical character.",
+              "Cātura: Quick, adaptable strategic intellect.",
+            ],
+            rightTitle: "Dedicated Execution",
+            rightPoints: [
+              "Ātura: Eagerness for the righteous mission.",
+              "Action free from personal self-interest.",
+              "Immediate response to crises.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "In Kautilya’s Arthaśāstra (Book 1, Chapter 19), an effective executive must be energetic, highly educated, and capable of prompt execution without administrative delays. Hanuman represents the ideal executive officer.",
+            economy:
+              "Encouraged dynamic civic engagement during a period when defeatism had made many communities passive and inactive, showing that learning must translate into active defense of society.",
+          },
+          history:
+            "Challenged the stereotype of scholars being physically passive or disconnected from practical life. Tulsidas held up an ideal where scholars are physically capable and warriors are deeply educated.",
+        },
+        {
+          id: 10,
+          type: "Chaupai 8",
+          devanagari: "प्रभु चरित्र सुनिबे को रसिया ।\nराम लखन सीता मन बसिया ॥",
+          translit:
+            "Prabhu caritra sunibe ko rasiyā |\nRāma lakhana sītā mana basiyā ||",
+          meaning:
+            "Delighting intensely in listening to the sacred exploits of the Lord; you dwell perpetually in the hearts of Sri Rama, Lakshmana, and Mother Sita.",
+          etymology: [
+            {
+              term: "Prabhu Caritra Sunibe Ko Rasiyā",
+              desc: "Rasiyā: an appreciative connoisseur of spiritual sweetness (Rasa), finding constant joy in listening to noble deeds and sacred history.",
+            },
+            {
+              term: "Mana Basiyā",
+              desc: "Dwelling naturally in the innermost thoughts of the divine family through selfless, affectionate devotion.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "यावद्रामकथा वीर चरिष्यति महीतले । तावच्छरीरे वत्स्यन्तु प्राणा मम न संशयः ॥",
+            ref: "Vālmīki Rāmāyaṇa (Uttara Kāṇḍa, Sarga 40, Verse 16)",
+            trans:
+              "Hanuman prays: 'As long as the sacred story of Rama circulates upon this earth, so long let life-breath remain within my body.'",
+          },
+          philosophy: {
+            summary:
+              "Incorruptible integrity: one whose joy is rooted in spiritual wisdom cannot be bought, flattered, or manipulated by material bribes. Because his devotion is completely selfless, he dwells naturally in the heart of the Divine.",
+            leftTitle: "Intrinsic Fulfillment",
+            leftPoints: [
+              "Joy rooted in sacred narrative rather than material gain.",
+              "Immunity to bribery, corruption, and flattery.",
+              "Selfless love transcending formal hierarchy.",
+            ],
+            rightTitle: "Mutual Intimacy",
+            rightPoints: [
+              "Dwelling within the mind of the Divine King.",
+              "Beloved companion of Sita and Lakshmana.",
+              "Union of personal service and transcendental grace.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "The most reliable advisor is one whose devotion to duty is genuine and intrinsic, rather than driven by mercenary incentives. Hanuman cannot be co-opted by enemy gifts or titles.",
+            economy:
+              "Replaced shallow court entertainment with elevating community storytelling (Katha and Ramlila), creating strong cultural cohesion across cities and villages.",
+          },
+          history:
+            "Tulsidas popularized vernacular Ramlila plays at Assi Ghat, transforming devotional narrative into a living community experience that built solidarity across all segments of the population.",
+        },
+        {
+          id: 11,
+          type: "Chaupai 9",
+          devanagari:
+            "सूक्ष्म रूप धरि सियहिं दिखावा ।\nबिकट रूप धरि लंक जरावा ॥",
+          translit:
+            "Sūkṣma rūpa dhari siyahĩ dikhāvā |\nBikaṭa rūpa dhari laṅka jarāvā ||",
+          meaning:
+            "Assuming an ultra-subtle, microscopic form, you appeared gently before Mother Sita; then expanding into a colossal, formidable countenance, you consumed the citadel of Lanka in flames.",
+          etymology: [
+            {
+              term: "Sūkṣma Rūpa (Aṇimā-siddhi)",
+              desc: "Reducing physical scale to microscopic proportions for covert reconnaissance and peaceful communication.",
+            },
+            {
+              term: "Bikaṭa Rūpa (Mahimā-siddhi)",
+              desc: "Expanding physical size and power to disrupt enemy infrastructure and shatter their morale.",
+            },
+            {
+              term: "Laṅka Jarāvā",
+              desc: "Systematic destruction of strategic supplies, barracks, and palace buildings within the enemy's fortified capital.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "स ददर्श कपिं तत्र ह्यणुरूपं महामतिः । ...ज्वालामालावृतं दीप्तं लङ्कां तां मरुतोदरः ॥",
+            ref: "Vālmīki Rāmāyaṇa (Sundara Kāṇḍa, Sarga 30.42 & 54.25)",
+            trans:
+              "He showed himself to Sita as an atomic being; later, enveloped in fire, he consumed Lanka like the cosmic fire at the end of an era.",
+          },
+          philosophy: {
+            summary:
+              "Modulation of power: gentle humility when comforting the vulnerable, balanced with decisive strength when confronting an oppressive regime. Power is never displayed for vanity, but is adapted precisely to the needs of the moment.",
+            leftTitle: "Gentle Compassion",
+            leftPoints: [
+              "Sūkṣma Rūpa: Atomic discretion.",
+              "Comforting the grieving captive Sita.",
+              "Operating with complete humility.",
+            ],
+            rightTitle: "Kinetic Justice",
+            rightPoints: [
+              "Bikaṭa Rūpa: Colossal presence.",
+              "Shattering the imperial capital's aura.",
+              "Strategic disruption of enemy logistics.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "A masterclass in asymmetric warfare: covert infiltration into enemy territory followed by targeted sabotage to disrupt enemy logistics, naval stores, and troop morale without requiring a large standing army.",
+            economy:
+              "Demonstrated that dedicated, agile actors can outmaneuver even the most heavily fortified imperial regimes through strategic agility and psychological shock.",
+          },
+          history:
+            "Reminded an occupied population that no imperial fortress is invulnerable, breaking the psychological paralysis that often grips communities under expansive imperial rule.",
+        },
+        {
+          id: 12,
+          type: "Chaupai 10",
+          devanagari: "भीम रूप धरि असुर सँहारे ।\nरामचंद्र के काज सवाँरे ॥",
+          translit:
+            "Bhīma rūpa dhari asura samhāre |\nRāmacañdra ke kāja savāre ||",
+          meaning:
+            "Manifesting an immense, formidable martial form, you eliminated predatory forces, perfectly fulfilling every enterprise of Sri Ramachandra.",
+          etymology: [
+            {
+              term: "Bhīma Rūpa",
+              desc: "A formidable physical presence that strikes deterrence into chaotic elements.",
+            },
+            {
+              term: "Asura Samhāre",
+              desc: "Eradicating predatory and corrupt forces to protect the innocent and re-establish cosmic balance.",
+            },
+            {
+              term: "Kāja Savāre",
+              desc: "Executing complex strategic objectives smoothly and with complete success.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "असुरक्षयकरणं लोकहितार्थं समुद्यतम् । तं दृष्ट्वा वानरश्रेष्ठं सैन्यानि विदुद्रुवुः ॥",
+            ref: "Vālmīki Rāmāyaṇa (Sundara Kāṇḍa)",
+            trans:
+              "Seeing the foremost warrior rising to defend the welfare of the worlds, the opposing army broke and scattered.",
+          },
+          philosophy: {
+            summary:
+              "The measured application of kinetic force (Daṇḍa) to protect society when diplomatic avenues have been exhausted. Martial power is exercised without malice, purely as an instrument of cosmic law.",
+            leftTitle: "Formidable Deterrence",
+            leftPoints: [
+              "Bhīma Rūpa: Unstoppable martial scale.",
+              "Neutralizing predatory despots.",
+              "Protecting contemplative institutions.",
+            ],
+            rightTitle: "Flawless Execution",
+            rightPoints: [
+              "Kāja Savāre: Accomplishing divine enterprises.",
+              "Order restored without collateral ego.",
+              "Equilibrium re-established in history.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "When defending the state, decisive action is necessary to prevent lawlessness and protect peaceful citizens. Reluctance to apply justice invites predatory aggression.",
+            economy:
+              "Inspired self-reliance and community defense among common people during a chaotic era of localized conflicts and raids.",
+          },
+          history:
+            "Provided a model of righteous strength during a time when civilians were often left undefended during regional political conflicts, encouraging local preparedness.",
+        },
+        {
+          id: 13,
+          type: "Chaupai 11",
+          devanagari: "लाय सजीवन लखन जियाये ।\nश्रीरघुबीर हरषि उर लाये ॥",
+          translit:
+            "Lāya sajīvana lakhana jiyāye |\nŚrī raghubīra haraṣi ura lāye ||",
+          meaning:
+            "Procuring the life-giving Sanjīvanī herb from the distant peaks, you revived Lakshmana from the edge of death; whereupon Sri Raghuvira, overflowing with joy, embraced you to his heart.",
+          etymology: [
+            {
+              term: "Lāya Sajīvana",
+              desc: "Procuring Mṛtasañjīvanī, the sacred restorative herb known in classical medicine for saving patients in critical trauma.",
+            },
+            {
+              term: "Lakhana Jiyāye",
+              desc: "Reviving Lakshmana, the commander-in-chief, turning the tide of the campaign at a crucial moment.",
+            },
+            {
+              term: "Haraṣi Ura Lāye",
+              desc: "Sri Rama embraces Hanuman warmly, setting aside formal hierarchy in shared affection.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "विशल्यकरणीं दिव्यां विशल्यकरणाद्वपुः । सावर्ण्यकरणीं चैव सञ्जीवकरणीं तथा ॥",
+            ref: "Vālmīki Rāmāyaṇa (Yuddha Kāṇḍa, Sarga 74, Verse 33)",
+            trans:
+              "Fetch the divine herbs: that which heals tissue, that which removes weapons, and that which restores life-breath.",
+          },
+          philosophy: {
+            summary:
+              "Hanuman represents the universal life-breath (Mukhya-prāṇa). When dedicated service revives righteousness, the boundary between human and divine dissolves in love. Rama's embrace honors selfless service over aristocratic distance.",
+            leftTitle: "Pranic Restoration",
+            leftPoints: [
+              "Overcoming terrain and tight deadlines.",
+              "Delivering life-restoring medicine.",
+              "Lakshmana revived to defend the mission.",
+            ],
+            rightTitle: "Divine Union",
+            rightPoints: [
+              "Sri Rama embracing his servant warmly.",
+              "Dissolving formal hierarchy through love.",
+              "The life-breath directly serving the Godhead.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "Rapid emergency logistics: when the commanding general is neutralized, rapid crisis response preserves troop morale and prevents defeat. Hanuman brings the entire mountain spur when plants cannot be identified under dark skies.",
+            economy:
+              "Highlighted the critical importance of emergency medicine and rapid logistics in military and civilian resilience.",
+          },
+          history:
+            "During an era plagued by epidemics, famine, and war trauma, this verse highlighted themes of healing and hope (later expanded in Tulsidas's Hanuman Bahuk).",
+        },
+        {
+          id: 14,
+          type: "Chaupai 17",
+          devanagari: "तुम्हरो मंत्र बिभीषन माना ।\nलंकेस्वर भए सब जग जाना ॥",
+          translit:
+            "Tumharo mantra bibhīṣana mānā |\nLaṅkeśvara bhae saba jaga jānā ||",
+          meaning:
+            "Vibhishana accepted and acted upon your strategic diplomatic counsel; whereupon he was crowned the Sovereign Lord of Lanka, as known across the entire world.",
+          etymology: [
+            {
+              term: "Mantra",
+              desc: "Strategic diplomatic counsel and state policy, rather than merely an esoteric chant.",
+            },
+            {
+              term: "Bibhīṣana Mānā",
+              desc: "Vibhishana heeded Hanuman's covert advice during their meeting in Lanka.",
+            },
+            {
+              term: "Laṅkeśvara Bhae",
+              desc: "Ascended the throne as the legitimate ruler of Lanka.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "प्रत्यक्षं लक्षणं तस्य ज्ञायते चेष्टितैरपि । नास्य दुष्टं हि पश्यामि भावमन्तर्गतं विभो ॥",
+            ref: "Vālmīki Rāmāyaṇa (Yuddha Kāṇḍa, Sarga 17, Verse 62)",
+            trans:
+              "When others distrusted Vibhishana, Hanuman correctly analyzed his sincere character and recommended accepting his alliance.",
+          },
+          philosophy: {
+            summary:
+              "Aligning with righteousness brings enduring security, whereas supporting a corrupt tyranny leads to ruin. Vibhishana's elevation proves that choosing moral law over corrupt family loyalties leads to lasting honor.",
+            leftTitle: "Principled Alignment",
+            leftPoints: [
+              "Rejecting allegiance to a tyrannical regime.",
+              "Aligning with eternal cosmic law (Ṛta).",
+              "Attaining lasting legitimate sovereignty.",
+            ],
+            rightTitle: "Strategic Intelligence",
+            rightPoints: [
+              "Hanuman's accurate psychological profiling.",
+              "Building trust amidst widespread suspicion.",
+              "Kingmaking through ethical diplomacy.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "Mastery of diplomatic intelligence and coalition building (Upagrahana and Bheda in Kautilya's Arthaśāstra). Recruiting Ravana's brother fractured Lanka's leadership and secured vital tactical intelligence.",
+            economy:
+              "Demonstrated how regional alliances can be built to counter formidable empires through shared principles rather than coercion.",
+          },
+          history:
+            "Offered guidance to regional leaders on choosing moral integrity over subservience to predatory regimes.",
+        },
+        {
+          id: 15,
+          type: "Chaupai 18",
+          devanagari: "जुग सहस्र जोजन पर भानू ।\nलील्यो ताहि मधुर फल जानू ॥",
+          translit:
+            "Juga sahasra jojana para bhānū |\nLīlyo tāhi madhura phala jānū ||",
+          meaning:
+            "The sun is positioned at an astronomical distance of a Yuga-thousand Yojanas; yet leaping across the void, you swallowed it, taking it to be a sweet, luscious fruit.",
+          etymology: [
+            {
+              term: "Juga (Yuga)",
+              desc: "In traditional astronomical computations (Sūrya Siddhānta 1.15-17), the divine Yuga cycle equals 12,000 divine years.",
+            },
+            {
+              term: "Sahasra",
+              desc: "Classical Sanskrit term for 1,000.",
+            },
+            {
+              term: "Jojana (Yojana)",
+              desc: "Ancient distance measure, where 1 Yojana ≈ 8 miles (12.87 km) in the Arthaśāstra (2.20) and Paramesvara tradition. 12,000 × 1,000 × 8 miles = 96,000,000 miles (~153.6 million km), remarkably close to solar distance.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "बाल्येऽपि चायमुत्पत्य सहस्रकिरणं रविम् । जिघृक्षुरभ्यधावत् स शिशुरर्कमिवोदितम् ॥",
+            ref: "Vālmīki Rāmāyaṇa (Uttara Kāṇḍa, Sarga 35, Verse 17)",
+            trans:
+              "In childhood, leaping into the sky, he rushed toward the rising sun, eager to seize it like a child reaching for a bright fruit.",
+          },
+          philosophy: {
+            summary:
+              "The sun represents time (Kāla) and cosmic fire. Swallowing the sun symbolizes mastering time, fear, and mortality. The vital life-breath harmonizes with solar energy, turning external fear into inner illumination.",
+            leftTitle: "Mastery Over Time",
+            leftPoints: [
+              "Transcending the terror of cosmic fire.",
+              "Mastering Kāla (time) through pranic awakening.",
+              "Childlike fearlessness before immense forces.",
+            ],
+            rightTitle: "Cosmological Metrics",
+            rightPoints: [
+              "Preserving ancient computational knowledge.",
+              "Harmonizing poetry with observational metrics.",
+              "Unifying mythic narrative with empirical scale.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "Psychological fearlessness: an army that does not fear natural perils or superior firepower cannot be easily intimidated. If the champion swallowed the sun, earthly threats can be confronted calmly.",
+            economy:
+              "Celebrated indigenous scientific and astronomical knowledge, keeping traditional learning alive in public memory.",
+          },
+          history:
+            "Preserved traditional astronomical metrics in accessible poetry, celebrating indigenous scientific knowledge among ordinary people.",
+        },
+        {
+          id: 16,
+          type: "Chaupai 21",
+          devanagari: "राम दुआरे तुम रखवारे ।\nहोत न आज्ञा बिनु पैसारे ॥",
+          translit: "Rāma dvāre tuma rakhavāre |\nHota na ājñā binu paisāre ||",
+          meaning:
+            "You stand as the sole sentinel guarding the threshold of Sri Rama's sanctuary; no soul can gain admittance without your explicit consent and authorization.",
+          etymology: [
+            {
+              term: "Rāma Dvāre",
+              desc: "At the sacred threshold. In temple layout and yoga, this marks the portal to the inner sanctum.",
+            },
+            {
+              term: "Rakhavāre",
+              desc: "Guardian, sentinel, and protector of institutional integrity.",
+            },
+            {
+              term: "Ājñā Binu Paisāre",
+              desc: "Entry is impossible without moral vetting and authentic permission.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "द्वारपालं पुरस्कृत्य प्रविशेदन्तःपुरं सदा । अन्यथा तु प्रविष्टस्य सद्यो नाशः प्रजायते ॥",
+            ref: "Nārada Pañcarātra & Agni Purāṇa (Chapter 39)",
+            trans:
+              "One must always honor the threshold guardian before entering the sanctuary; entering improperly brings spiritual failure.",
+          },
+          philosophy: {
+            summary:
+              "One cannot attain peace (Rama) without cultivating humility and breath-control (Hanuman). Hanuman checks selfish motives at the gate, ensuring that only sincere seekers enter.",
+            leftTitle: "Threshold Guardianship",
+            leftPoints: [
+              "Vetting the seeker's inner motives.",
+              "Protecting the inner sanctuary from egoism.",
+              "Pranic mastery as the gateway to realization.",
+            ],
+            rightTitle: "Ethical Access Control",
+            rightPoints: [
+              "No entry without authentic transformation.",
+              "Ego must dissolve before reaching peace.",
+              "Incorruptible administrative integrity.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "Institutional access control (Arthaśāstra Book 1, Ch. 20): protecting the leadership through rigorous vetting by an incorruptible gatekeeper. Preventing unauthorized access shields the state from covert infiltration.",
+            economy:
+              "Contrasted corrupt imperial courts—where access required bribes—with Rama's court, where entry was open to anyone with sincere faith and good character.",
+          },
+          history:
+            "Under Mughal rule, gaining an audience with officials required heavy payments. Tulsidas affirmed that in the divine court, character—not wealth—grants admittance.",
+        },
+        {
+          id: 17,
+          type: "Chaupai 27",
+          devanagari: "सब पर राम तपस्वी राजा ।\nतिन के काज सकल तुम साजा ॥",
+          translit:
+            "Saba para rāma tapasvī rājā |\nTina ke kāja sakala tuma sājā ||",
+          meaning:
+            "Sri Rama reigns supreme above all monarchs as the Ascetic King; yet you single-handedly managed, executed, and brought to completion all of his royal enterprises.",
+          etymology: [
+            {
+              term: "Tapasvī Rājā",
+              desc: "The paradoxical ideal: an ascetic king who wields sovereign power while living in personal simplicity and restraint.",
+            },
+            {
+              term: "Tina Ke Kāja Sakala",
+              desc: "Every royal responsibility, diplomatic mission, and military campaign.",
+            },
+            {
+              term: "Tuma Sājā",
+              desc: "You planned, organized, and executed with complete fidelity.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "धर्मज्ञः सत्यसन्धश्च प्रजानां च हिते रतः । नियतात्मा महावीर्यो युक्तात्मा समदर्शनः ॥",
+            ref: "Vālmīki Rāmāyaṇa (Ayodhyā Kāṇḍa, Sarga 1, Verses 12–14)",
+            trans:
+              "Rama is devoted to truth, dedicated to the welfare of his people, disciplined in spirit, and impartial toward all.",
+          },
+          philosophy: {
+            summary:
+              "True moral authority comes from self-restraint (Tapas) rather than material indulgence, using power purely for the common good. Hanuman serves this ideal ruler, showing that selfless power finds its fulfillment in protecting society.",
+            leftTitle: "Ascetic Kingship",
+            leftPoints: [
+              "Tapasvī Rājā: Sovereignty grounded in restraint.",
+              "Power exercised for the public welfare.",
+              "Rejection of imperial despotism and vanity.",
+            ],
+            rightTitle: "Executive Fidelity",
+            rightPoints: [
+              "Tina Ke Kāja: Fulfilling royal enterprises.",
+              "Flawless administrative coordination.",
+              "Serving the common good without personal ego.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "The Kautilyan Rajarshi (philosopher-king) whose happiness lies in the well-being of the people, served by an energetic and dedicated prime executive.",
+            economy:
+              "A quiet critique of ostentatious worldly empires, pointing people toward the enduring ideal of righteous, service-minded governance (Ramarajya).",
+          },
+          history:
+            "While imperial rulers spent heavily on monuments and courts, Tulsidas highlighted a king who lived simply and served his people directly.",
+        },
+        {
+          id: 18,
+          type: "Chaupai 31",
+          devanagari: "अष्ट सिद्धि नव निधि के दाता ।\nअस बर दीन्ह जानकी माता ॥",
+          translit:
+            "Aṣṭa siddhi nava nidhi ke dātā |\nAsa bara dīnha jānakī mātā ||",
+          meaning:
+            "You are the generous dispenser of the Eight Yogic Perfections and the Nine Cosmic Treasures; an unassailable boon bestowed upon you by Mother Janaki.",
+          etymology: [
+            {
+              term: "Aṣṭa Siddhi",
+              desc: "The eight classical masteries of Patanjali's Yoga Sūtras (Aṇimā, Mahimā, Garimā, Laghimā, Prāpti, Prākāmya, Īśitva, Vaśitva).",
+            },
+            {
+              term: "Nava Nidhi",
+              desc: "The nine divine treasures of the Mārkaṇḍeya Purāṇa (Padma, Mahāpadma, Śaṅkha, Makara, Kacchapa, Mukunda, Kunda, Nīla, Kharva).",
+            },
+            {
+              term: "Dātā",
+              desc: "The trusted distributor and custodian, ensuring these gifts are given only to those who will use them selflessly.",
+            },
+          ],
+          scripture: {
+            sanskrit: "ततोऽणिमादिप्रादुर्भावः कायसम्पत्तद्धर्मानभिघातश्च ॥",
+            ref: "Patanjali Yoga Sūtra (Vibhūti Pāda 3.45) & Mārkaṇḍeya Purāṇa (68)",
+            trans:
+              "From samyama arises mastery over form: atomic minuteness, cosmic magnitude, and freedom from physical hindrance.",
+          },
+          philosophy: {
+            summary:
+              "Hanuman is free from ego; therefore, he can be trusted with unlimited spiritual and material resources without danger of corruption. Sita grants him this authority knowing he will distribute them solely for righteousness.",
+            leftTitle: "Aṣṭa-Siddhi (Technical Mastery)",
+            leftPoints: [
+              "Mastery over mass, gravity, and scale.",
+              "Unbroken perception and willpower.",
+              "Used solely for the protection of society.",
+            ],
+            rightTitle: "Nava-Nidhi (Economic Reserve)",
+            rightPoints: [
+              "Custodianship of material and cultural wealth.",
+              "Decentralized distribution to the righteous.",
+              "Immunity to personal greed and hoarding.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "A healthy society requires both material resources (Nidhis) and technical innovation (Siddhis), wisely distributed for public welfare rather than hoarded in palaces.",
+            economy:
+              "Reassured struggling artisans, farmers, and traders that true abundance comes through spiritual grace and hard work, not imperial favors.",
+          },
+          history:
+            "Heavy imperial taxes drained resources from rural areas. Tulsidas reassured the population that true spiritual and material prosperity remains under divine guardianship.",
+        },
+        {
+          id: 19,
+          type: "Chaupai 38",
+          devanagari: "जो सत बार पाठ कर कोई ।\nछूटहि बंदि महा सुख होई ॥",
+          translit:
+            "Jo śata bāra pāṭha kara koī |\nChūṭahi bandi mahā sukha hoī ||",
+          meaning:
+            "Whoever recites this sacred hymn one hundred times with focused awareness breaks free from all physical, mental, and existential bondage, entering into supreme bliss.",
+          etymology: [
+            {
+              term: "Śata Bāra Pāṭha",
+              desc: "Reciting 100 times as a disciplined sound-meditation practice (Mantra-japa).",
+            },
+            {
+              term: "Chūṭahi Bandi",
+              desc: "Freedom from bondage: physical imprisonment, mental anxiety, and existential confusion.",
+            },
+            {
+              term: "Mahā Sukha Hoī",
+              desc: "The attainment of lasting spiritual peace and clarity.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "आवर्तनात् सहस्रैस्तु सर्वपापैः प्रमुच्यते । बन्धात् मोक्षमवाप्नोति सर्वकामार्थसिद्धये ॥",
+            ref: "Tantrarāja Tantra & Śiva Purāṇa",
+            trans:
+              "Through disciplined repetition of sacred verses, one is liberated from all negative impressions and freed from captivity.",
+          },
+          philosophy: {
+            summary:
+              "Sound therapy: disciplined recitation focuses the mind, calms nervous tension, and restores courage during difficult trials. Breaking free from psychological bondage precedes physical freedom.",
+            leftTitle: "Bandi-Mocana (Liberation)",
+            leftPoints: [
+              "Physical: Freedom from unjust incarceration.",
+              "Psychic: Calming trauma and neuroses.",
+              "Ontological: Dissolving existential bondage.",
+            ],
+            rightTitle: "Somatic Harmony",
+            rightPoints: [
+              "Rhythmic sound calming the nervous system.",
+              "Awakening latent courage and resilience.",
+              "Restoring unshakeable inner joy (Mahā-Sukha).",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "Psychological resistance: an occupying power cannot control people whose minds are free from fear and despair. Inner sovereignty makes citizens resilient against tyranny.",
+            economy:
+              "Provided hope to citizens facing arbitrary detention and oppressive measures, assuring them of divine protection.",
+          },
+          history:
+            "Recalls Tulsidas's own unjust imprisonment in Delhi, where his faith was vindicated, providing real encouragement to citizens facing arbitrary rule.",
+        },
+        {
+          id: 20,
+          type: "Concluding Doha",
+          devanagari:
+            "पवनतनय संकट हरन मंगल मूरति रूप ।\nराम लखन सीता सहित हृदय बसहु सुर भूप ॥",
+          translit:
+            "Pavanatanaya saṅkaṭa haraṇa maṅgala mūrati rūpa |\nRāma lakhaṇa sītā sahita hṛdaya basahu sura bhūpa ||",
+          meaning:
+            "O Son of the Wind, redeemer of all crises, living embodiment of auspiciousness! Sovereign Lord of celestials, dwell eternally within the sanctuary of my heart, alongside Sri Rama, Lakshmana, and Mother Sita.",
+          etymology: [
+            {
+              term: "Pavanatanaya / Saṅkaṭa Haraṇa",
+              desc: "The son of the life-giving wind, who dissolves all suffering and difficulty.",
+            },
+            {
+              term: "Maṅgala Mūrati Rūpa",
+              desc: "The tangible embodiment of peace, protection, and goodness.",
+            },
+            {
+              term: "Hṛdaya Basahu Sura Bhūpa",
+              desc: "Establishing the divine court of truth, vigilance, and compassion permanently within the seeker's consciousness.",
+            },
+          ],
+          scripture: {
+            sanskrit:
+              "अथ यदिदमस्मिन् ब्रह्मपुरे दहरं पुण्डरीकं वेश्म दहरोऽस्मिन्नन्तराकाशस्तस्मिन्यदन्तस्तदन्वेष्टव्यम्...",
+            ref: "Chāndogya Upaniṣad (Chapter 8, Section 1, Verse 1)",
+            trans:
+              "Within the city of Brahman is a small lotus chamber, and in its subtle inner space resides the Supreme Reality that one must realize.",
+          },
+          philosophy: {
+            summary:
+              "The journey concludes: the mind cleansed in the first Doha now becomes the permanent dwelling place of divine truth, vigilance, and grace. The individual attains lasting peace, moral courage, and spiritual sovereignty.",
+            leftTitle: "The Internal Court (Rāma-Darbar)",
+            leftPoints: [
+              "Sri Rama: Cosmic truth and moral center.",
+              "Mata Sita: Compassion and grace.",
+              "Lakshmana: Focused vigilance (Viveka).",
+            ],
+            rightTitle: "Pranic Realization",
+            rightPoints: [
+              "Hanuman: Boundless life-force in service.",
+              "Dissolving personal crisis into peace.",
+              "Permanent enshrinement of divine presence.",
+            ],
+          },
+          statecraft: {
+            tactical:
+              "When leaders and citizens anchor truth, compassion, and vigilance in their hearts, society remains peaceful and resilient against all adversity.",
+            economy:
+              "Cultural unity: a society with a shared moral foundation cannot be fractured by outside interference.",
+          },
+          history:
+            "United North Indian society by giving them a shared, protective spiritual heritage that anyone could carry in their heart anywhere.",
+        },
+      ];
+
+      // Browser Persistence Engine
+      const CHALISA_STORAGE_KEY = "sanatana_chalisa_current_index";
+      let currentVerseIndex = 0;
+
+      function loadSavedVerseIndex() {
+        const saved = localStorage.getItem(CHALISA_STORAGE_KEY);
+        if (saved !== null) {
+          const parsed = parseInt(saved, 10);
+          if (!isNaN(parsed) && parsed >= 0 && parsed < chalisaData.length) {
+            currentVerseIndex = parsed;
+          }
+        }
+      }
+
+      function saveVerseIndex(idx) {
+        localStorage.setItem(CHALISA_STORAGE_KEY, idx);
+      }
+
+      function populateQuickJump() {
+        const select = document.getElementById("verse-quick-jump");
+        select.innerHTML = "";
+        chalisaData.forEach((v, i) => {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = `${v.type} (${v.translit.split("|")[0].trim().substring(0, 30)}...)`;
+          select.appendChild(opt);
+        });
+        select.value = currentVerseIndex;
+        select.onchange = (e) => {
+          currentVerseIndex = parseInt(e.target.value, 10);
+          saveVerseIndex(currentVerseIndex);
+          renderCurrentVerse();
+        };
+      }
+
+      function renderCurrentVerse() {
+        const v = chalisaData[currentVerseIndex];
+        if (!v) return;
+
+        // 1. Center Verse Card
+        document.getElementById("verse-type-badge").textContent = v.type;
+        document.getElementById("verse-devanagari-text").innerHTML =
+          v.devanagari.replace(/\n/g, "<br/>");
+        document.getElementById("verse-translit-text").innerHTML =
+          v.translit.replace(/\n/g, "<br/>");
+
+        // 2. Left-Aligned Structured 5-Pillar Exegesis
+        const container = document.getElementById("exegesis-container");
+        container.innerHTML = `
+          <!-- Full Meaning -->
+          <div class="exegesis-section">
+            <h3 class="exegesis-header gold-accent">Full Meaning</h3>
+            <p class="exegesis-meaning-box">"${v.meaning}"</p>
+          </div>
+
+          <!-- 1. Etymological & Shastric Deconstruction -->
+          <div class="exegesis-section">
+            <h3 class="exegesis-header">1. Etymological & Shastric Deconstruction</h3>
+            ${v.etymology
+              .map(
+                (item) => `
+              <div class="term-item">
+                <div class="term-title">${item.term}</div>
+                <div class="exegesis-text">${item.desc}</div>
+              </div>
+            `,
+              )
+              .join("")}
+          </div>
+
+          <!-- 2. Scriptural Evidence -->
+          <div class="exegesis-section">
+            <h3 class="exegesis-header">2. Scriptural Evidence & Canonical Corroboration</h3>
+            <div class="shastra-quote-box">
+              <div class="shastra-ref">${v.scripture.ref}</div>
+              <div class="shastra-sanskrit">${v.scripture.sanskrit.replace(/\n/g, "<br/>")}</div>
+              <div class="shastra-trans">"${v.scripture.trans}"</div>
+            </div>
+          </div>
+
+          <!-- 3. Core Philosophical Synthesis: Brahma-Tejas & Kshatra-Virya -->
+          <div class="exegesis-section">
+            <h3 class="exegesis-header">3. Core Philosophical Synthesis: Brahma-Tejas & Kṣātra-Vīrya</h3>
+            <p class="exegesis-text">${v.philosophy.summary}</p>
+            <div class="synthesis-grid">
+              <div class="synthesis-col">
+                <div class="synthesis-title">${v.philosophy.leftTitle}</div>
+                <ul class="synthesis-list">
+                  ${v.philosophy.leftPoints.map((p) => `<li>• ${p}</li>`).join("")}
+                </ul>
+              </div>
+              <div class="synthesis-col">
+                <div class="synthesis-title">${v.philosophy.rightTitle}</div>
+                <ul class="synthesis-list">
+                  ${v.philosophy.rightPoints.map((p) => `<li>• ${p}</li>`).join("")}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Political, Economic, and Strategic Statecraft -->
+          <div class="exegesis-section">
+            <h3 class="exegesis-header">4. Political, Economic, and Strategic Statecraft</h3>
+            <div class="term-item">
+              <div class="term-title">Tactical Military & Diplomatic Doctrine</div>
+              <div class="exegesis-text">${v.statecraft.tactical}</div>
+            </div>
+            <div class="term-item" style="margin-top: 10px;">
+              <div class="term-title">Political Economy & Strategic Sovereignty</div>
+              <div class="exegesis-text">${v.statecraft.economy}</div>
+            </div>
+          </div>
+
+          <!-- 5. Historical Reality in 16th-Century Varanasi -->
+          <div class="exegesis-section">
+            <h3 class="exegesis-header">5. Historical Reality in 16th-Century Varanasi</h3>
+            <p class="exegesis-text">${v.history}</p>
+          </div>
+        `;
+
+        // 3. Update Nav Bar & Jump Select
+        document.getElementById("verse-quick-jump").value = currentVerseIndex;
+        document.getElementById("verse-counter-text").textContent =
+          `Verse ${currentVerseIndex + 1} of ${chalisaData.length}`;
+
+        document.getElementById("btn-prev-verse").disabled =
+          currentVerseIndex === 0;
+        document.getElementById("btn-next-verse").disabled =
+          currentVerseIndex === chalisaData.length - 1;
+      }
+
+      function goToPrevVerse() {
+        if (currentVerseIndex > 0) {
+          currentVerseIndex--;
+          saveVerseIndex(currentVerseIndex);
+          renderCurrentVerse();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      function goToNextVerse() {
+        if (currentVerseIndex < chalisaData.length - 1) {
+          currentVerseIndex++;
+          saveVerseIndex(currentVerseIndex);
+          renderCurrentVerse();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      document
+        .getElementById("btn-prev-verse")
+        .addEventListener("click", goToPrevVerse);
+      document
+        .getElementById("btn-next-verse")
+        .addEventListener("click", goToNextVerse);
+
+      // Keyboard arrow shortcuts for Sanatana Dharma reader
+      window.addEventListener("keydown", (e) => {
+        if (viewSanatana.style.display === "block") {
+          if (e.key === "ArrowLeft") goToPrevVerse();
+          if (e.key === "ArrowRight") goToNextVerse();
+        }
+      });
+
+      // Games List
       const gamesList = [
         {
           title: "Krillion",
@@ -957,7 +2554,7 @@
           closeModal();
       };
 
-      // --- Auth & Initializing ---
+      // Auth & Initialization
       async function loadConfig() {
         try {
           const response = await fetch("creds.json");
@@ -1014,13 +2611,11 @@
 
       function initApp() {
         document.getElementById("auth-container").style.display = "none";
-        // On desktop sidebar is standard block/flex, handled by media queries. Mobile header controlled by CSS.
         document.getElementById("sidebar-nav").style.display = "flex";
         document.getElementById("mobile-header").style.display =
           window.innerWidth <= 768 ? "flex" : "none";
         document.getElementById("main-content").style.display = "block";
 
-        // Handle resize showing/hiding mobile header gracefully
         window.addEventListener("resize", () => {
           if (window.innerWidth <= 768) {
             document.getElementById("mobile-header").style.display = "flex";
@@ -1029,6 +2624,10 @@
             closeMenu();
           }
         });
+
+        // Initialize Sanatana Dharma state & persistence
+        loadSavedVerseIndex();
+        populateQuickJump();
 
         viewOverview.style.display = "block";
         loadPeople();
@@ -1052,7 +2651,7 @@
         return response.json();
       }
 
-      // --- Preload Engine ---
+      // Preload Engine
       const prefetchCache = {};
       function prefetchFolderMedia(folderId) {
         if (prefetchCache[folderId]) return;
@@ -1089,7 +2688,7 @@
           });
       }
 
-      // --- Media Renderer ---
+      // Media Renderer
       const gallery = document.getElementById("image-gallery");
       function renderMedia(files) {
         gallery.innerHTML = "";
@@ -1127,7 +2726,7 @@
         }
       }
 
-      // --- Overview Logic ---
+      // Overview Logic
       const personSelect = document.getElementById("person-select");
       const yearSelect = document.getElementById("year-select");
       const monthSelect = document.getElementById("month-select");
@@ -1277,20 +2876,89 @@
 
       randomBtn.addEventListener("click", async () => {
         gallery.innerHTML =
-          "Gathering random media... (This might take a moment the first time)";
+          "Gathering random media from the gallery... (This might take a moment)";
         try {
-          if (randomMediaPool.length === 0) {
-            const imageQuery = encodeURIComponent(
-              `(mimeType contains 'image/' or mimeType contains 'video/') and trashed = false`,
+          if (randomMediaPool.length < 50) {
+            const excludedNames = ["Anas", "Araveinth", "Fudail"];
+            const personOptions = Array.from(personSelect.options).filter(
+              (opt) => opt.value && !excludedNames.includes(opt.text),
             );
-            const url = `https://www.googleapis.com/drive/v3/files?q=${imageQuery}&fields=files(id,name,thumbnailLink,mimeType)&pageSize=1000`;
-            const data = await authorizedFetch(url);
-            if (data.files && data.files.length > 0)
-              randomMediaPool = data.files;
+
+            if (personOptions.length === 0) {
+              gallery.innerHTML =
+                "<span style='color:#ef4444;'>No valid people found in the root folder.</span>";
+              return;
+            }
+
+            const randomPeople = personOptions
+              .sort(() => 0.5 - Math.random())
+              .slice(0, 4);
+
+            const fetchPromises = randomPeople.map(async (person) => {
+              let personMedia = [];
+              try {
+                const qYear = encodeURIComponent(
+                  `'${person.value}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                );
+                const yearData = await authorizedFetch(
+                  `https://www.googleapis.com/drive/v3/files?q=${qYear}&fields=files(id,name)`,
+                );
+                if (!yearData.files) return [];
+
+                const randomYears = yearData.files
+                  .sort(() => 0.5 - Math.random())
+                  .slice(0, 2);
+
+                for (let year of randomYears) {
+                  if (year.name === "date-unknown") {
+                    const qMedia = encodeURIComponent(
+                      `'${year.id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+                    );
+                    const mediaData = await authorizedFetch(
+                      `https://www.googleapis.com/drive/v3/files?q=${qMedia}&fields=files(id,name,thumbnailLink,mimeType)`,
+                    );
+                    if (mediaData.files) personMedia.push(...mediaData.files);
+                  } else {
+                    const qMonth = encodeURIComponent(
+                      `'${year.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                    );
+                    const monthData = await authorizedFetch(
+                      `https://www.googleapis.com/drive/v3/files?q=${qMonth}&fields=files(id,name)`,
+                    );
+                    if (!monthData.files) continue;
+
+                    const randomMonths = monthData.files
+                      .sort(() => 0.5 - Math.random())
+                      .slice(0, 2);
+                    for (let month of randomMonths) {
+                      const qMedia = encodeURIComponent(
+                        `'${month.id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+                      );
+                      const mediaData = await authorizedFetch(
+                        `https://www.googleapis.com/drive/v3/files?q=${qMedia}&fields=files(id,name,thumbnailLink,mimeType)`,
+                      );
+                      if (mediaData.files) personMedia.push(...mediaData.files);
+                    }
+                  }
+                }
+              } catch (err) {
+                console.error("Error fetching for", person.text, err);
+              }
+              return personMedia;
+            });
+
+            const results = await Promise.all(fetchPromises);
+            results.forEach((res) => randomMediaPool.push(...res));
+
+            const uniquePool = Array.from(
+              new Map(randomMediaPool.map((item) => [item.id, item])).values(),
+            );
+            randomMediaPool = uniquePool;
           }
+
           if (randomMediaPool.length === 0) {
             gallery.innerHTML =
-              "<span style='color:#ef4444;'>No media found in your Drive.</span>";
+              "<span style='color:#ef4444;'>No media found in the gallery.</span>";
             return;
           }
 
@@ -1298,7 +2966,7 @@
           let availablePool = randomMediaPool.filter(
             (file) => !excludedIds.has(file.id),
           );
-          const neededItems = Math.min(200, randomMediaPool.length);
+          const neededItems = Math.min(50, randomMediaPool.length);
 
           while (
             availablePool.length < neededItems &&
@@ -1310,8 +2978,10 @@
               (file) => !excludedIds.has(file.id),
             );
           }
+
           const shuffled = availablePool.sort(() => 0.5 - Math.random());
           const selected = shuffled.slice(0, neededItems);
+
           recentRandomHistory.push(selected.map((f) => f.id));
           if (recentRandomHistory.length > 3) recentRandomHistory.shift();
 
@@ -1319,13 +2989,18 @@
             if (file.thumbnailLink)
               new Image().src = file.thumbnailLink.replace("=s220", "=w800");
           });
+
           renderMedia(selected);
+
+          if (availablePool.length < 20) {
+            randomMediaPool = [];
+          }
         } catch (error) {
           gallery.innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
         }
       });
 
-      // --- GAME LOGIC ---
+      // Game Logic
       const gamePersonSelect = document.getElementById("game-person-select");
       const startGameBtn = document.getElementById("start-game-btn");
       const gameStatus = document.getElementById("game-status");
@@ -1443,7 +3118,7 @@
 
         gameStatus.innerHTML = `Ready! Use <b>W A S D</b> keys (or on-screen pad) to control the snake.`;
         canvas.style.display = "block";
-        document.getElementById("view-game").classList.add("active-game"); // Triggers touch D-Pad visibility in CSS
+        document.getElementById("view-game").classList.add("active-game");
         startGameBtn.disabled = false;
         startGameBtn.innerText = "Restart Game";
 
@@ -1525,7 +3200,6 @@
         );
       }
 
-      // Input Logic (Keyboard + Mobile D-Pad)
       function setDirection(key) {
         if (viewGame.style.display === "block") {
           if (key === "w" && dy === 0) {
