@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Drive Image Gallery (OAuth)</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-color: #f3f4f6;
+        --card-bg: #ffffff;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --sidebar-bg: #ffffff;
+        --sidebar-width: 260px;
+        --border-color: #e5e7eb;
+        --radius-lg: 16px;
+        --radius-md: 10px;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        overflow-x: hidden;
+      }
+
+      /* --- Sidebar Styles --- */
+      .sidebar {
+        width: var(--sidebar-width);
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid var(--border-color);
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 24px 16px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        z-index: 100;
+      }
+
+      .sidebar-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 30px;
+        padding-left: 12px;
+        letter-spacing: -0.025em;
+      }
+
+      .nav-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .nav-item {
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+      .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        color: var(--text-muted);
+        text-decoration: none;
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+      }
+      .nav-link:hover {
+        background-color: #f3f4f6;
+        color: var(--text-main);
+      }
+      .nav-item.active .nav-link {
+        background-color: #eff6ff;
+        color: var(--primary);
+      }
+
+      /* --- Main Content Area --- */
+      .main-content {
+        flex: 1;
+        padding: 20px 40px;
+        box-sizing: border-box;
+        min-height: 100vh;
+        margin-left: var(--sidebar-width);
+      }
+
+      h1 {
+        text-align: left;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      /* --- Centered Auth Screen --- */
+      #auth-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: var(--bg-color);
+        z-index: 200;
+      }
+
+      #auth-section {
+        width: 100%;
+        max-width: 400px;
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-color);
+        text-align: center;
+      }
+
+      #auth-section h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      #status-text {
+        color: var(--text-muted);
+        margin-bottom: 30px;
+        line-height: 1.5;
+      }
+      #login-btn {
+        width: 100%;
+      }
+
+      /* --- Top Controls Area --- */
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+        background-color: var(--card-bg);
+        padding: 12px 20px;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+      }
+
+      select,
+      button {
+        font-family: "Inter", sans-serif;
+        font-size: 0.95rem;
+        padding: 10px 16px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        background-color: var(--card-bg);
+        color: var(--text-main);
+        outline: none;
+        transition: all 0.2s ease;
+      }
+
+      select {
+        cursor: pointer;
+        appearance: none;
+        padding-right: 36px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+      }
+      select:hover:not(:disabled) {
+        border-color: #d1d5db;
+      }
+      select:focus:not(:disabled) {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+      }
+      select:disabled {
+        background-color: #f9fafb;
+        color: #9ca3af;
+        cursor: not-allowed;
+        opacity: 0.8;
+      }
+
+      button {
+        background-color: var(--primary);
+        color: white;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+      }
+      button:hover:not(:disabled) {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+      button:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      /* --- Gallery Grid Layout --- */
+      #image-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+        align-items: start;
+        color: var(--text-muted);
+      }
+
+      .media-container {
+        position: relative;
+        display: block;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        background-color: var(--border-color);
+        aspect-ratio: 1 / 1;
+      }
+      .gallery-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+      }
+      .media-container:hover .gallery-img {
+        transform: scale(1.05);
+      }
+
+      .play-icon {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: white;
+        padding: 8px;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        pointer-events: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* --- Cinematic Popup Modal --- */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(5px);
+      }
+      .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 1000px;
+        height: 80vh;
+        background: #000;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+      }
+      .close-btn {
+        position: absolute;
+        top: -40px;
+        right: 0;
+        color: white;
+        font-size: 32px;
+        cursor: pointer;
+        font-weight: 300;
+        line-height: 1;
+        transition: color 0.2s;
+      }
+      .close-btn:hover {
+        color: #f87171;
+      }
+      #media-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: #000;
+      }
+
+      /* --- Views --- */
+      #view-overview,
+      #view-game,
+      #view-daily {
+        display: none;
+      }
+
+      /* --- Game Specific Styles --- */
+      #game-canvas {
+        background-color: #1f2937;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        display: block;
+        margin-top: 10px;
+        max-width: 100%;
+      }
+      #game-status {
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-top: 5px;
+      }
+
+      /* --- Daily Games Layout --- */
+      .games-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+      }
+      @media (max-width: 1200px) {
+        .games-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 900px) {
+        .games-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .game-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: var(--shadow-sm);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .game-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+      }
+      .game-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 0 0 8px 0;
+      }
+      .game-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+      .game-btn {
+        margin-top: auto;
+        display: block;
+        text-align: center;
+        background-color: var(--primary);
+        color: white;
+        padding: 10px 0;
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+      }
+      .game-btn:hover {
+        background-color: var(--primary-hover);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Centered Login Screen -->
+    <div id="auth-container">
+      <div id="auth-section">
+        <h1>Welcome</h1>
+        <p id="status-text">Loading configuration...</p>
+        <button id="login-btn" onclick="handleAuthClick()" disabled>
+          Log In with Google
+        </button>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar-nav" style="display: none">
+      <div class="sidebar-brand">Media Gallery</div>
+      <ul class="nav-menu">
+        <li class="nav-item active" id="nav-overview-btn">
+          <a class="nav-link">Overview</a>
+        </li>
+        <li class="nav-item" id="nav-game-btn">
+          <a class="nav-link">Snake Game</a>
+        </li>
+        <li class="nav-item" id="nav-daily-btn">
+          <a class="nav-link">Daily Games</a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content" style="display: none">
+      <!-- OVERVIEW VIEW -->
+      <div id="view-overview">
+        <h1>Overview</h1>
+        <div class="controls">
+          <select id="person-select">
+            <option value="">-- Select Person --</option>
+          </select>
+          <select id="year-select" disabled>
+            <option value="">-- Select Year --</option>
+          </select>
+          <select id="month-select" disabled>
+            <option value="">-- Select Month --</option>
+          </select>
+          <button id="load-btn">Load Media</button>
+        </div>
+        <div id="image-gallery">
+          Select a person, year, and month to view media.
+        </div>
+      </div>
+
+      <!-- GAME VIEW -->
+      <div id="view-game">
+        <h1>Snake Game</h1>
+        <div class="controls">
+          <select id="game-person-select">
+            <option value="">-- Select Person --</option>
+          </select>
+          <button id="start-game-btn">Start Game</button>
+        </div>
+        <div id="game-status">
+          Pick a person to populate the snake with their pictures!
+        </div>
+        <canvas
+          id="game-canvas"
+          width="975"
+          height="600"
+          style="display: none"
+        ></canvas>
+      </div>
+
+      <!-- DAILY GAMES VIEW -->
+      <div id="view-daily">
+        <h1>Daily Games</h1>
+        <p style="color: var(--text-muted); margin-bottom: 20px">
+          A collection of your favorite daily puzzles and logic games.
+        </p>
+        <div class="games-grid" id="games-grid"></div>
+      </div>
+    </main>
+
+    <!-- The Media Popup -->
+    <div id="media-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <iframe id="media-frame" src="" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <script>
+      let CLIENT_ID = "";
+      let ROOT_FOLDER_ID = "";
+      const SCOPES = "https://www.googleapis.com/auth/drive.readonly";
+
+      let tokenClient;
+      let accessToken = null;
+
+      // Nav Elements
+      const navOverviewBtn = document.getElementById("nav-overview-btn");
+      const navGameBtn = document.getElementById("nav-game-btn");
+      const navDailyBtn = document.getElementById("nav-daily-btn");
+
+      const viewOverview = document.getElementById("view-overview");
+      const viewGame = document.getElementById("view-game");
+      const viewDaily = document.getElementById("view-daily");
+
+      function switchTab(activeBtn, activeView) {
+        navOverviewBtn.classList.remove("active");
+        navGameBtn.classList.remove("active");
+        navDailyBtn.classList.remove("active");
+        viewOverview.style.display = "none";
+        viewGame.style.display = "none";
+        viewDaily.style.display = "none";
+
+        activeBtn.classList.add("active");
+        activeView.style.display = "block";
+      }
+
+      navOverviewBtn.onclick = () => switchTab(navOverviewBtn, viewOverview);
+      navGameBtn.onclick = () => switchTab(navGameBtn, viewGame);
+      navDailyBtn.onclick = () => switchTab(navDailyBtn, viewDaily);
+
+      // --- Daily Games Generator ---
+      const gamesList = [
+        { title: "Krillion", desc: "A daily puzzle game." },
+        { title: "Chainle", desc: "Play Chainle." },
+        {
+          title: "HarryPotterdle",
+          desc: "Daily characters, quotes, spells, descriptions, and locations.",
+        },
+        {
+          title: "PotterGrid",
+          desc: "A daily 3×3 Harry Potter character grid; it also has unlimited practice.",
+        },
+        {
+          title: "Harry Potter Quizzes",
+          desc: "Official trivia quizzes with different difficulties.",
+        },
+        {
+          title: "Harry Potter Puzzles",
+          desc: "Crosswords, word searches, riddles, and other Potter-themed puzzles.",
+        },
+        { title: "Contexto", desc: "Find the secret word by its context." },
+        {
+          title: "Semantle",
+          desc: "Guess the secret word based on semantic similarity.",
+        },
+        {
+          title: "Connections",
+          desc: "Group words that share a common thread.",
+        },
+        { title: "Strands", desc: "Uncover hidden words in a letter grid." },
+        {
+          title: "Waffle",
+          desc: "A daily word game in the shape of a waffle.",
+        },
+        { title: "Globle", desc: "Guess the mystery country." },
+        { title: "Worldle", desc: "Guess the country based on its shape." },
+        {
+          title: "Travle",
+          desc: "Guess the countries you need to travel through to reach the destination.",
+        },
+        {
+          title: "GeoGuessr",
+          desc: "Explore the world and figure out where you are.",
+        },
+        { title: "DailyGeo", desc: "A quick daily geography trivia game." },
+        { title: "Framed", desc: "Guess the movie from a single frame." },
+        {
+          title: "Bandle",
+          desc: "Guess the song based on individual instrument tracks.",
+        },
+        { title: "Heardle", desc: "Guess the song from a short audio clip." },
+        { title: "Nerdle", desc: "Guess the math equation." },
+        { title: "Sudoku", desc: "Classic number puzzle." },
+        {
+          title: "Daily Grid",
+          desc: "Has 12 different logic puzzles every day, all free.",
+        },
+        { title: "Quordle", desc: "Play four Wordle games at once." },
+        { title: "Octordle", desc: "Play eight Wordle games at once." },
+        { title: "Wordle", desc: "Guess the 5-letter word in 6 tries." },
+        { title: "Pinpoint", desc: "Guess the category from clues." },
+        { title: "Crossclimb", desc: "Solve clues to climb the word ladder." },
+        { title: "Redactle", desc: "Guess the hidden Wikipedia article." },
+        { title: "Puzzgrid", desc: "Find the 4 groups of 4 words." },
+      ];
+
+      function renderGames() {
+        const grid = document.getElementById("games-grid");
+        gamesList.forEach((game) => {
+          const searchUrl = `https://www.google.com/search?q=${encodeURIComponent("Play " + game.title)}`;
+          const card = document.createElement("div");
+          card.className = "game-card";
+          card.innerHTML = `
+            <h3 class="game-title">${game.title}</h3>
+            <p class="game-desc">${game.desc}</p>
+            <a href="${searchUrl}" target="_blank" class="game-btn">Play ${game.title}</a>
+          `;
+          grid.appendChild(card);
+        });
+      }
+      renderGames();
+
+      function closeModal() {
+        document.getElementById("media-modal").style.display = "none";
+        document.getElementById("media-frame").src = "";
+        document.body.style.overflow = "";
+      }
+      window.onclick = function (event) {
+        if (event.target == document.getElementById("media-modal"))
+          closeModal();
+      };
+
+      // --- Auth, Setup & Caching Logic ---
+      async function loadConfig() {
+        try {
+          const response = await fetch("creds.json");
+          if (!response.ok) throw new Error("Could not find creds.json");
+          const creds = await response.json();
+          CLIENT_ID = creds.CLIENT_ID;
+          ROOT_FOLDER_ID = creds.ROOT_FOLDER_ID;
+
+          // Check if we have a valid cached token!
+          const cachedTokenString = localStorage.getItem("drive_auth_token");
+          if (cachedTokenString) {
+            const tokenData = JSON.parse(cachedTokenString);
+            if (Date.now() < tokenData.expiresAt) {
+              // Token is still valid!
+              accessToken = tokenData.token;
+              document.getElementById("auth-container").style.display = "none";
+              document.getElementById("sidebar-nav").style.display = "flex";
+              document.getElementById("main-content").style.display = "block";
+              viewOverview.style.display = "block";
+              await loadPeople();
+            } else {
+              // Token expired, clear it
+              localStorage.removeItem("drive_auth_token");
+            }
+          }
+
+          // Load Google Script (even if cached, we need it ready in case token expires)
+          const script = document.createElement("script");
+          script.src = "https://accounts.google.com/gsi/client";
+          script.async = true;
+          script.defer = true;
+          script.onload = () => {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+              client_id: CLIENT_ID,
+              scope: SCOPES,
+              callback: async (tokenResponse) => {
+                if (tokenResponse.error) return;
+                accessToken = tokenResponse.access_token;
+
+                // SAVE TOKEN TO BROWSER CACHE (expires_in is usually 3599 seconds = 1 hour)
+                const expiresAt =
+                  Date.now() + (tokenResponse.expires_in - 60) * 1000; // 1 minute safety buffer
+                localStorage.setItem(
+                  "drive_auth_token",
+                  JSON.stringify({
+                    token: accessToken,
+                    expiresAt: expiresAt,
+                  }),
+                );
+
+                document.getElementById("auth-container").style.display =
+                  "none";
+                document.getElementById("sidebar-nav").style.display = "flex";
+                document.getElementById("main-content").style.display = "block";
+
+                viewOverview.style.display = "block";
+                await loadPeople();
+              },
+            });
+            // If we didn't already log in via cache, show the login button
+            if (!accessToken) {
+              document.getElementById("status-text").textContent =
+                "Please log in to authorize access.";
+              document.getElementById("login-btn").disabled = false;
+            }
+          };
+          document.head.appendChild(script);
+        } catch (error) {
+          document.getElementById("status-text").innerHTML =
+            `<span style="color:red;">Error: Failed to load creds.json.</span>`;
+        }
+      }
+
+      window.onload = loadConfig;
+      function handleAuthClick() {
+        tokenClient.requestAccessToken({ prompt: "consent" });
+      }
+
+      // Custom Fetch that handles expired tokens
+      async function authorizedFetch(url) {
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        // If Google says the token is dead, clear cache and force user to log in again
+        if (response.status === 401) {
+          localStorage.removeItem("drive_auth_token");
+          alert(
+            "Your session has expired (1 hour limit). Please log in again.",
+          );
+          location.reload();
+        }
+
+        if (!response.ok) throw new Error("API request failed.");
+        return response.json();
+      }
+
+      // --- Overview Logic ---
+      const personSelect = document.getElementById("person-select");
+      const yearSelect = document.getElementById("year-select");
+      const monthSelect = document.getElementById("month-select");
+      const loadBtn = document.getElementById("load-btn");
+      const gallery = document.getElementById("image-gallery");
+      const monthOrder = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      async function loadPeople() {
+        // Prevent double loading if already loaded via cache
+        if (personSelect.options.length > 1) return;
+
+        try {
+          const query = encodeURIComponent(
+            `'${ROOT_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+          );
+          const data = await authorizedFetch(
+            `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=name`,
+          );
+
+          personSelect.innerHTML =
+            '<option value="">-- Select Person --</option>';
+          document.getElementById("game-person-select").innerHTML =
+            '<option value="">-- Select Person --</option>';
+
+          data.files.forEach((f) => {
+            personSelect.appendChild(new Option(f.name, f.id));
+            document
+              .getElementById("game-person-select")
+              .appendChild(new Option(f.name, f.id));
+          });
+        } catch (error) {
+          gallery.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+        }
+      }
+
+      personSelect.addEventListener("change", async () => {
+        const personId = personSelect.value;
+        yearSelect.innerHTML = '<option value="">-- Select Year --</option>';
+        yearSelect.disabled = true;
+        monthSelect.innerHTML = '<option value="">-- Select Month --</option>';
+        monthSelect.disabled = true;
+        if (!personId) return;
+
+        try {
+          const query = encodeURIComponent(
+            `'${personId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+          );
+          const data = await authorizedFetch(
+            `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=name`,
+          );
+          data.files.forEach((f) => {
+            const opt = new Option(f.name, f.id);
+            opt.dataset.name = f.name;
+            yearSelect.appendChild(opt);
+          });
+          yearSelect.disabled = false;
+        } catch (error) {
+          gallery.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+        }
+      });
+
+      yearSelect.addEventListener("change", async () => {
+        const yearId = yearSelect.value;
+        const yearName =
+          yearSelect.options[yearSelect.selectedIndex]?.dataset.name;
+        monthSelect.innerHTML = '<option value="">-- Select Month --</option>';
+        monthSelect.disabled = true;
+        if (!yearId) return;
+        if (yearName === "date-unknown") return;
+
+        try {
+          const query = encodeURIComponent(
+            `'${yearId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+          );
+          const data = await authorizedFetch(
+            `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`,
+          );
+          if (data.files && data.files.length > 0) {
+            data.files.sort(
+              (a, b) => monthOrder.indexOf(a.name) - monthOrder.indexOf(b.name),
+            );
+            data.files.forEach((f) =>
+              monthSelect.appendChild(new Option(f.name, f.id)),
+            );
+            monthSelect.disabled = false;
+          }
+        } catch (error) {}
+      });
+
+      loadBtn.addEventListener("click", async () => {
+        const personId = personSelect.value;
+        const yearId = yearSelect.value;
+        const yearName =
+          yearSelect.options[yearSelect.selectedIndex]?.dataset.name;
+        const monthId = monthSelect.value;
+
+        if (!personId || !yearId) return;
+        let targetFolderId = yearId;
+        if (yearName !== "date-unknown") {
+          if (!monthId) {
+            gallery.innerHTML =
+              "<p style='color:red;'>Please select a month.</p>";
+            return;
+          }
+          targetFolderId = monthId;
+        }
+
+        gallery.innerHTML = "Loading media...";
+        try {
+          const imageQuery = encodeURIComponent(
+            `'${targetFolderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+          );
+          const url = `https://www.googleapis.com/drive/v3/files?q=${imageQuery}&fields=files(id,name,thumbnailLink,mimeType)`;
+          const data = await authorizedFetch(url);
+          gallery.innerHTML = "";
+
+          if (data.files && data.files.length > 0) {
+            data.files.forEach((file) => {
+              const link = document.createElement("a");
+              link.className = "media-container";
+              link.href = "#";
+              const previewUrl = `https://drive.google.com/file/d/${file.id}/preview`;
+
+              link.onclick = (e) => {
+                e.preventDefault();
+                const frame = document.getElementById("media-frame");
+                frame.src = previewUrl;
+                document.getElementById("media-modal").style.display = "block";
+                document.body.style.overflow = "hidden";
+              };
+
+              const img = document.createElement("img");
+              img.src = file.thumbnailLink
+                ? file.thumbnailLink.replace("=s220", "=w800")
+                : `https://drive.google.com/thumbnail?id=${file.id}&sz=w800`;
+              img.className = "gallery-img";
+              link.appendChild(img);
+
+              if (file.mimeType && file.mimeType.startsWith("video/")) {
+                const playIcon = document.createElement("div");
+                playIcon.className = "play-icon";
+                playIcon.innerHTML = "▶";
+                link.appendChild(playIcon);
+              }
+              gallery.appendChild(link);
+            });
+          } else {
+            gallery.innerHTML = "No media found in this folder.";
+          }
+        } catch (error) {
+          gallery.innerHTML = `<span style="color:red;">Error: ${error.message}</span>`;
+        }
+      });
+
+      // --- GAME LOGIC ---
+      const gamePersonSelect = document.getElementById("game-person-select");
+      const startGameBtn = document.getElementById("start-game-btn");
+      const gameStatus = document.getElementById("game-status");
+      const canvas = document.getElementById("game-canvas");
+      const ctx = canvas.getContext("2d");
+
+      let gameInterval;
+      let snake = [];
+      let food = {};
+      let dx = 75,
+        dy = 0;
+      const gridSize = 75;
+      let snakeImagePool = [];
+
+      function getRandomImageFromPool() {
+        return snakeImagePool[
+          Math.floor(Math.random() * snakeImagePool.length)
+        ];
+      }
+
+      async function fetchImagesForGame(personId) {
+        let allThumbnails = [];
+        try {
+          let q1 = encodeURIComponent(
+            `'${personId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+          );
+          let dataYears = await authorizedFetch(
+            `https://www.googleapis.com/drive/v3/files?q=${q1}&fields=files(id,name)`,
+          );
+          let randomYears = dataYears.files
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 2);
+
+          for (let y of randomYears) {
+            if (y.name === "date-unknown") {
+              let qImg = encodeURIComponent(
+                `'${y.id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+              );
+              let dImg = await authorizedFetch(
+                `https://www.googleapis.com/drive/v3/files?q=${qImg}&fields=files(thumbnailLink)`,
+              );
+              if (dImg.files)
+                allThumbnails.push(
+                  ...dImg.files.map((f) => f.thumbnailLink).filter(Boolean),
+                );
+            } else {
+              let q2 = encodeURIComponent(
+                `'${y.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+              );
+              let dataMonths = await authorizedFetch(
+                `https://www.googleapis.com/drive/v3/files?q=${q2}&fields=files(id,name)`,
+              );
+              let randomMonths = dataMonths.files
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 2);
+
+              for (let m of randomMonths) {
+                let qImg = encodeURIComponent(
+                  `'${m.id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+                );
+                let dImg = await authorizedFetch(
+                  `https://www.googleapis.com/drive/v3/files?q=${qImg}&fields=files(thumbnailLink)`,
+                );
+                if (dImg.files)
+                  allThumbnails.push(
+                    ...dImg.files.map((f) => f.thumbnailLink).filter(Boolean),
+                  );
+              }
+            }
+          }
+          return allThumbnails;
+        } catch (error) {
+          return [];
+        }
+      }
+
+      startGameBtn.addEventListener("click", async () => {
+        const personId = gamePersonSelect.value;
+        if (!personId) return;
+
+        startGameBtn.disabled = true;
+        gameStatus.innerText =
+          "Gathering random photos of this person... (Takes a few seconds)";
+        canvas.style.display = "none";
+        clearInterval(gameInterval);
+
+        const links = await fetchImagesForGame(personId);
+        if (links.length === 0) {
+          gameStatus.innerText =
+            "Could not find any photos for this person to build the snake!";
+          startGameBtn.disabled = false;
+          return;
+        }
+
+        const shuffledLinks = links
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 30);
+        gameStatus.innerText = "Processing images for the game engine...";
+        snakeImagePool = await Promise.all(
+          shuffledLinks.map((link) => {
+            return new Promise((resolve) => {
+              const img = new Image();
+              img.onload = () => resolve(img);
+              img.onerror = () => resolve(null);
+              img.src = link.replace("=s220", "=w200");
+            });
+          }),
+        );
+
+        snakeImagePool = snakeImagePool.filter((img) => img !== null);
+        if (snakeImagePool.length === 0) {
+          gameStatus.innerText = "Failed to process images.";
+          startGameBtn.disabled = false;
+          return;
+        }
+
+        gameStatus.innerHTML = `Ready! Use <b>W A S D</b> keys to control the snake.`;
+        canvas.style.display = "block";
+        startGameBtn.disabled = false;
+        startGameBtn.innerText = "Restart Game";
+
+        snake = [{ x: 450, y: 300, img: getRandomImageFromPool() }];
+        dx = gridSize;
+        dy = 0;
+
+        spawnFood();
+        gameInterval = setInterval(updateGame, 150);
+      });
+
+      function spawnFood() {
+        food = {
+          x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+          y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize,
+          img: getRandomImageFromPool(),
+        };
+      }
+
+      function updateGame() {
+        let prevTail = {
+          x: snake[snake.length - 1].x,
+          y: snake[snake.length - 1].y,
+        };
+        for (let i = snake.length - 1; i > 0; i--) {
+          snake[i].x = snake[i - 1].x;
+          snake[i].y = snake[i - 1].y;
+        }
+        snake[0].x += dx;
+        snake[0].y += dy;
+
+        if (
+          snake[0].x < 0 ||
+          snake[0].x >= canvas.width ||
+          snake[0].y < 0 ||
+          snake[0].y >= canvas.height
+        )
+          return gameOver();
+        for (let i = 1; i < snake.length; i++) {
+          if (snake[0].x === snake[i].x && snake[0].y === snake[i].y)
+            return gameOver();
+        }
+
+        if (snake[0].x === food.x && snake[0].y === food.y) {
+          snake.push({ x: prevTail.x, y: prevTail.y, img: food.img });
+          spawnFood();
+        }
+        drawGame();
+      }
+
+      function drawGame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(food.img, food.x, food.y, gridSize, gridSize);
+        ctx.strokeStyle = "#4ade80";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(food.x, food.y, gridSize, gridSize);
+
+        snake.forEach((segment, index) => {
+          ctx.drawImage(segment.img, segment.x, segment.y, gridSize, gridSize);
+          ctx.strokeStyle = index === 0 ? "#3b82f6" : "#ffffff";
+          ctx.lineWidth = index === 0 ? 3 : 1;
+          ctx.strokeRect(segment.x, segment.y, gridSize, gridSize);
+        });
+      }
+
+      function gameOver() {
+        clearInterval(gameInterval);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.font = "bold 40px Inter";
+        ctx.textAlign = "center";
+        ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2);
+        ctx.font = "20px Inter";
+        ctx.fillText(
+          `Score: ${snake.length - 1} photos collected`,
+          canvas.width / 2,
+          canvas.height / 2 + 40,
+        );
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if (viewGame.style.display === "block") {
+          const key = e.key.toLowerCase();
+          if (key === "w" && dy === 0) {
+            dx = 0;
+            dy = -gridSize;
+          }
+          if (key === "s" && dy === 0) {
+            dx = 0;
+            dy = gridSize;
+          }
+          if (key === "a" && dx === 0) {
+            dx = -gridSize;
+            dy = 0;
+          }
+          if (key === "d" && dx === 0) {
+            dx = gridSize;
+            dy = 0;
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
