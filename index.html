@@ -527,82 +527,164 @@
       navGameBtn.onclick = () => switchTab(navGameBtn, viewGame);
       navDailyBtn.onclick = () => switchTab(navDailyBtn, viewDaily);
 
-      // --- Daily Games Generator ---
+      // --- Daily Games Generator (With Direct URLs) ---
       const gamesList = [
-        { title: "Krillion", desc: "A daily puzzle game." },
-        { title: "Chainle", desc: "Play Chainle." },
+        {
+          title: "Krillion",
+          desc: "A daily puzzle game.",
+          url: "https://krillion.io/",
+        },
+        {
+          title: "Chainle",
+          desc: "Play Chainle.",
+          url: "https://chainle.org/",
+        },
         {
           title: "HarryPotterdle",
           desc: "Daily characters, quotes, spells, descriptions, and locations.",
+          url: "https://dailydles.com/games/harrypotterdle",
         },
         {
           title: "PotterGrid",
           desc: "A daily 3×3 Harry Potter character grid; it also has unlimited practice.",
+          url: "https://wordleunlimited.io/pottergrid",
         },
         {
           title: "Harry Potter Quizzes",
           desc: "Official trivia quizzes with different difficulties.",
+          url: "https://www.wizardingworld.com/quiz",
         },
         {
           title: "Harry Potter Puzzles",
           desc: "Crosswords, word searches, riddles, and other Potter-themed puzzles.",
+          url: "https://www.wizardingworld.com/features/puzzles",
         },
-        { title: "Contexto", desc: "Find the secret word by its context." },
+        {
+          title: "Contexto",
+          desc: "Find the secret word by its context.",
+          url: "https://contexto.me/",
+        },
         {
           title: "Semantle",
           desc: "Guess the secret word based on semantic similarity.",
+          url: "https://semantle.com/",
         },
         {
           title: "Connections",
           desc: "Group words that share a common thread.",
+          url: "https://www.nytimes.com/games/connections",
         },
-        { title: "Strands", desc: "Uncover hidden words in a letter grid." },
+        {
+          title: "Strands",
+          desc: "Uncover hidden words in a letter grid.",
+          url: "https://www.nytimes.com/games/strands",
+        },
         {
           title: "Waffle",
           desc: "A daily word game in the shape of a waffle.",
+          url: "https://wafflegame.net/",
         },
-        { title: "Globle", desc: "Guess the mystery country." },
-        { title: "Worldle", desc: "Guess the country based on its shape." },
+        {
+          title: "Globle",
+          desc: "Guess the mystery country.",
+          url: "https://globle-game.com/",
+        },
+        {
+          title: "Worldle",
+          desc: "Guess the country based on its shape.",
+          url: "https://worldle.teuteuf.fr/",
+        },
         {
           title: "Travle",
           desc: "Guess the countries you need to travel through to reach the destination.",
+          url: "https://travle.earth/",
         },
         {
           title: "GeoGuessr",
           desc: "Explore the world and figure out where you are.",
+          url: "https://www.geoguessr.com/",
         },
-        { title: "DailyGeo", desc: "A quick daily geography trivia game." },
-        { title: "Framed", desc: "Guess the movie from a single frame." },
+        {
+          title: "DailyGeo",
+          desc: "A quick daily geography trivia game.",
+          url: "https://dailygeo.fun/",
+        },
+        {
+          title: "Framed",
+          desc: "Guess the movie from a single frame.",
+          url: "https://framed.wtf/",
+        },
         {
           title: "Bandle",
           desc: "Guess the song based on individual instrument tracks.",
+          url: "https://bandle.app/",
         },
-        { title: "Heardle", desc: "Guess the song from a short audio clip." },
-        { title: "Nerdle", desc: "Guess the math equation." },
-        { title: "Sudoku", desc: "Classic number puzzle." },
+        {
+          title: "Heardle",
+          desc: "Guess the song from a short audio clip.",
+          url: "https://www.heardle.app/",
+        },
+        {
+          title: "Nerdle",
+          desc: "Guess the math equation.",
+          url: "https://nerdlegame.com/",
+        },
+        {
+          title: "Sudoku",
+          desc: "Classic number puzzle.",
+          url: "https://sudoku.com/",
+        },
         {
           title: "Daily Grid",
           desc: "Has 12 different logic puzzles every day, all free.",
+          url: "https://www.dailygrid.com/",
         },
-        { title: "Quordle", desc: "Play four Wordle games at once." },
-        { title: "Octordle", desc: "Play eight Wordle games at once." },
-        { title: "Wordle", desc: "Guess the 5-letter word in 6 tries." },
-        { title: "Pinpoint", desc: "Guess the category from clues." },
-        { title: "Crossclimb", desc: "Solve clues to climb the word ladder." },
-        { title: "Redactle", desc: "Guess the hidden Wikipedia article." },
-        { title: "Puzzgrid", desc: "Find the 4 groups of 4 words." },
+        {
+          title: "Quordle",
+          desc: "Play four Wordle games at once.",
+          url: "https://www.merriam-webster.com/games/quordle",
+        },
+        {
+          title: "Octordle",
+          desc: "Play eight Wordle games at once.",
+          url: "https://octordle.com/",
+        },
+        {
+          title: "Wordle",
+          desc: "Guess the 5-letter word in 6 tries.",
+          url: "https://www.nytimes.com/games/wordle/index.html",
+        },
+        {
+          title: "Pinpoint",
+          desc: "Guess the category from clues.",
+          url: "https://www.linkedin.com/games/pinpoint/",
+        },
+        {
+          title: "Crossclimb",
+          desc: "Solve clues to climb the word ladder.",
+          url: "https://www.linkedin.com/games/crossclimb/",
+        },
+        {
+          title: "Redactle",
+          desc: "Guess the hidden Wikipedia article.",
+          url: "https://redactle.net/",
+        },
+        {
+          title: "Puzzgrid",
+          desc: "Find the 4 groups of 4 words.",
+          url: "https://puzzgrid.com/",
+        },
       ];
 
       function renderGames() {
         const grid = document.getElementById("games-grid");
         gamesList.forEach((game) => {
-          const searchUrl = `https://www.google.com/search?q=${encodeURIComponent("Play " + game.title)}`;
           const card = document.createElement("div");
           card.className = "game-card";
           card.innerHTML = `
             <h3 class="game-title">${game.title}</h3>
             <p class="game-desc">${game.desc}</p>
-            <a href="${searchUrl}" target="_blank" class="game-btn">Play ${game.title}</a>
+            <a href="${game.url}" target="_blank" class="game-btn">Play ${game.title}</a>
           `;
           grid.appendChild(card);
         });
@@ -628,12 +710,10 @@
           CLIENT_ID = creds.CLIENT_ID;
           ROOT_FOLDER_ID = creds.ROOT_FOLDER_ID;
 
-          // Check if we have a valid cached token!
           const cachedTokenString = localStorage.getItem("drive_auth_token");
           if (cachedTokenString) {
             const tokenData = JSON.parse(cachedTokenString);
             if (Date.now() < tokenData.expiresAt) {
-              // Token is still valid!
               accessToken = tokenData.token;
               document.getElementById("auth-container").style.display = "none";
               document.getElementById("sidebar-nav").style.display = "flex";
@@ -641,12 +721,10 @@
               viewOverview.style.display = "block";
               await loadPeople();
             } else {
-              // Token expired, clear it
               localStorage.removeItem("drive_auth_token");
             }
           }
 
-          // Load Google Script (even if cached, we need it ready in case token expires)
           const script = document.createElement("script");
           script.src = "https://accounts.google.com/gsi/client";
           script.async = true;
@@ -659,9 +737,8 @@
                 if (tokenResponse.error) return;
                 accessToken = tokenResponse.access_token;
 
-                // SAVE TOKEN TO BROWSER CACHE (expires_in is usually 3599 seconds = 1 hour)
                 const expiresAt =
-                  Date.now() + (tokenResponse.expires_in - 60) * 1000; // 1 minute safety buffer
+                  Date.now() + (tokenResponse.expires_in - 60) * 1000;
                 localStorage.setItem(
                   "drive_auth_token",
                   JSON.stringify({
@@ -679,7 +756,6 @@
                 await loadPeople();
               },
             });
-            // If we didn't already log in via cache, show the login button
             if (!accessToken) {
               document.getElementById("status-text").textContent =
                 "Please log in to authorize access.";
@@ -698,13 +774,11 @@
         tokenClient.requestAccessToken({ prompt: "consent" });
       }
 
-      // Custom Fetch that handles expired tokens
       async function authorizedFetch(url) {
         const response = await fetch(url, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
-        // If Google says the token is dead, clear cache and force user to log in again
         if (response.status === 401) {
           localStorage.removeItem("drive_auth_token");
           alert(
@@ -739,7 +813,6 @@
       ];
 
       async function loadPeople() {
-        // Prevent double loading if already loaded via cache
         if (personSelect.options.length > 1) return;
 
         try {
