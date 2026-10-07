@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Google Drive Image Gallery (OAuth)</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,7 +17,7 @@
 
     <style>
       :root {
-        /* Modern Dark Theme Colors (Slate/Zinc inspired) */
+        /* Modern Dark Theme Colors */
         --bg-color: #0f172a;
         --card-bg: #1e293b;
         --text-main: #f8fafc;
@@ -25,7 +28,6 @@
         --accent-gradient: linear-gradient(135deg, #3b82f6, #4f46e5);
         --accent-gradient-hover: linear-gradient(135deg, #60a5fa, #6366f1);
 
-        /* Secondary Gradient for Random Button */
         --secondary-gradient: linear-gradient(135deg, #8b5cf6, #d946ef);
         --secondary-gradient-hover: linear-gradient(135deg, #a78bfa, #e879f9);
 
@@ -74,6 +76,61 @@
         overflow-x: hidden;
       }
 
+      /* --- Mobile Header & Overlay --- */
+      .mobile-header {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: var(--sidebar-bg);
+        border-bottom: 1px solid var(--border-color);
+        z-index: 90;
+        padding: 0 20px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .mobile-header-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .menu-toggle {
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+        box-shadow: none;
+      }
+      .menu-toggle:hover {
+        background: transparent;
+        transform: scale(1.1);
+        box-shadow: none;
+      }
+      .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 95;
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .mobile-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+
+      /* --- Sidebar Styles --- */
       .sidebar {
         width: var(--sidebar-width);
         background-color: var(--sidebar-bg);
@@ -88,6 +145,7 @@
         flex-direction: column;
         z-index: 100;
         box-shadow: var(--shadow-lg);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .sidebar-brand {
@@ -136,12 +194,16 @@
         color: var(--text-main);
       }
 
+      /* --- Main Content Area --- */
       .main-content {
         flex: 1;
         padding: 30px 40px;
         box-sizing: border-box;
         min-height: 100vh;
         margin-left: var(--sidebar-width);
+        transition:
+          margin 0.3s ease,
+          padding 0.3s ease;
       }
 
       h1 {
@@ -154,6 +216,7 @@
         color: var(--text-main);
       }
 
+      /* --- Auth & Controls --- */
       #auth-container {
         display: flex;
         align-items: center;
@@ -166,9 +229,8 @@
         background-color: var(--bg-color);
         z-index: 200;
       }
-
       #auth-section {
-        width: 100%;
+        width: 90%;
         max-width: 400px;
         background: var(--card-bg);
         padding: 40px;
@@ -176,8 +238,8 @@
         box-shadow: var(--shadow-lg);
         border: 1px solid var(--border-color);
         text-align: center;
+        box-sizing: border-box;
       }
-
       #auth-section h1 {
         text-align: center;
         margin-bottom: 20px;
@@ -269,10 +331,11 @@
         box-shadow: var(--glow-secondary);
       }
 
+      /* --- Gallery Grid Layout --- */
       #image-gallery {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
         align-items: start;
         color: var(--text-muted);
       }
@@ -330,6 +393,7 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       }
 
+      /* --- Cinematic Popup Modal --- */
       .modal {
         display: none;
         position: fixed;
@@ -338,7 +402,7 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(15, 23, 42, 0.9);
+        background-color: rgba(15, 23, 42, 0.95);
         backdrop-filter: blur(8px);
       }
       .modal-content {
@@ -346,9 +410,9 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 90%;
+        width: 95%;
         max-width: 1000px;
-        height: 80vh;
+        height: 85vh;
         background: #000;
         border-radius: var(--radius-lg);
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
@@ -376,6 +440,7 @@
         background-color: #000;
       }
 
+      /* --- Views & Games --- */
       #view-overview,
       #view-game,
       #view-daily {
@@ -389,7 +454,10 @@
         box-shadow: var(--shadow-lg);
         display: block;
         margin-top: 15px;
-        max-width: 100%;
+        width: 100%;
+        max-width: 975px;
+        aspect-ratio: 975 / 600;
+        height: auto;
       }
       #game-status {
         color: var(--text-muted);
@@ -397,21 +465,44 @@
         margin-top: 5px;
       }
 
+      /* Touch controls for mobile snake */
+      .mobile-dpad {
+        display: none; /* hidden on desktop */
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .dpad-row {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+      .dpad-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--card-bg);
+        border: 2px solid var(--border-color);
+        color: var(--text-main);
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-sm);
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .dpad-btn:active {
+        background: var(--primary);
+        border-color: var(--primary);
+      }
+
       .games-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 20px;
         margin-top: 20px;
-      }
-      @media (max-width: 1200px) {
-        .games-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-      @media (max-width: 900px) {
-        .games-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
       }
 
       .game-card {
@@ -457,9 +548,80 @@
         background: var(--accent-gradient);
         color: white;
       }
+
+      /* --- Responsive Mobile Media Queries --- */
+      @media (max-width: 1200px) {
+        .games-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 900px) {
+        .games-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        /* Enable mobile header */
+        .mobile-header {
+          display: flex;
+        }
+
+        /* Sidebar becomes off-canvas */
+        .sidebar {
+          transform: translateX(-100%);
+          padding-top: 20px;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-brand {
+          display: none; /* hidden since it's in mobile header */
+        }
+
+        /* Main content adjustments */
+        .main-content {
+          margin-left: 0;
+          margin-top: 60px;
+          padding: 20px;
+        }
+
+        /* Grid and Controls flow adjustments */
+        #image-gallery {
+          grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+          gap: 10px;
+        }
+        .games-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 15px;
+        }
+        .controls select,
+        .controls button {
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        /* Fix modal close button for smaller screens */
+        .close-btn {
+          right: 10px;
+          top: -40px;
+          font-size: 30px;
+        }
+
+        /* Show mobile touch D-Pad when game is active */
+        #view-game.active-game .mobile-dpad {
+          display: flex;
+        }
+      }
     </style>
   </head>
   <body>
+    <!-- Centered Login Screen -->
     <div id="auth-container">
       <div id="auth-section">
         <h1>Welcome</h1>
@@ -470,6 +632,14 @@
       </div>
     </div>
 
+    <!-- Mobile Header -->
+    <header class="mobile-header" id="mobile-header" style="display: none">
+      <div class="mobile-header-brand">Daily Source</div>
+      <button class="menu-toggle" id="menu-toggle">☰</button>
+    </header>
+    <div class="mobile-overlay" id="mobile-overlay"></div>
+
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar-nav" style="display: none">
       <div class="sidebar-brand">Daily Source</div>
       <ul class="nav-menu">
@@ -485,6 +655,7 @@
       </ul>
     </aside>
 
+    <!-- Main Content Area -->
     <main class="main-content" id="main-content" style="display: none">
       <div id="view-overview">
         <h1>Overview</h1>
@@ -523,6 +694,18 @@
           height="600"
           style="display: none"
         ></canvas>
+
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-dpad">
+          <div class="dpad-row">
+            <button class="dpad-btn" id="dpad-up">▲</button>
+          </div>
+          <div class="dpad-row">
+            <button class="dpad-btn" id="dpad-left">◀</button>
+            <button class="dpad-btn" id="dpad-down">▼</button>
+            <button class="dpad-btn" id="dpad-right">▶</button>
+          </div>
+        </div>
       </div>
 
       <div id="view-daily">
@@ -548,7 +731,24 @@
       let tokenClient;
       let accessToken = null;
 
-      // Nav Logic
+      // --- Mobile Menu Logic ---
+      const sidebar = document.getElementById("sidebar-nav");
+      const overlay = document.getElementById("mobile-overlay");
+      const menuToggle = document.getElementById("menu-toggle");
+
+      function toggleMenu() {
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("active");
+      }
+      function closeMenu() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
+      }
+
+      menuToggle.addEventListener("click", toggleMenu);
+      overlay.addEventListener("click", closeMenu);
+
+      // --- Nav Logic ---
       const navOverviewBtn = document.getElementById("nav-overview-btn");
       const navGameBtn = document.getElementById("nav-game-btn");
       const navDailyBtn = document.getElementById("nav-daily-btn");
@@ -563,15 +763,17 @@
         [viewOverview, viewGame, viewDaily].forEach(
           (v) => (v.style.display = "none"),
         );
+
         activeBtn.classList.add("active");
         activeView.style.display = "block";
+        closeMenu(); // Auto close sidebar on mobile when navigating
       }
 
       navOverviewBtn.onclick = () => switchTab(navOverviewBtn, viewOverview);
       navGameBtn.onclick = () => switchTab(navGameBtn, viewGame);
       navDailyBtn.onclick = () => switchTab(navDailyBtn, viewDaily);
 
-      // Games List
+      // --- Games List ---
       const gamesList = [
         {
           title: "Krillion",
@@ -585,7 +787,7 @@
         },
         {
           title: "HarryPotterdle",
-          desc: "Daily characters, quotes, spells, descriptions, and locations.",
+          desc: "Daily characters, quotes, spells, descriptions.",
           url: "https://dailydles.com/games/harrypotterdle",
         },
         {
@@ -660,7 +862,7 @@
         },
         {
           title: "Bandle",
-          desc: "Guess the song based on individual instrument tracks.",
+          desc: "Guess the song based on instrument tracks.",
           url: "https://bandle.app/",
         },
         {
@@ -680,7 +882,7 @@
         },
         {
           title: "Daily Grid",
-          desc: "Has 12 different logic puzzles every day, all free.",
+          desc: "Has 12 different logic puzzles every day.",
           url: "https://www.dailygrid.com/",
         },
         {
@@ -745,7 +947,7 @@
           closeModal();
       };
 
-      // --- Auth, Setup & Caching Logic ---
+      // --- Auth & Initializing ---
       async function loadConfig() {
         try {
           const response = await fetch("creds.json");
@@ -802,8 +1004,22 @@
 
       function initApp() {
         document.getElementById("auth-container").style.display = "none";
+        // On desktop sidebar is standard block/flex, handled by media queries. Mobile header controlled by CSS.
         document.getElementById("sidebar-nav").style.display = "flex";
+        document.getElementById("mobile-header").style.display =
+          window.innerWidth <= 768 ? "flex" : "none";
         document.getElementById("main-content").style.display = "block";
+
+        // Handle resize showing/hiding mobile header gracefully
+        window.addEventListener("resize", () => {
+          if (window.innerWidth <= 768) {
+            document.getElementById("mobile-header").style.display = "flex";
+          } else {
+            document.getElementById("mobile-header").style.display = "none";
+            closeMenu();
+          }
+        });
+
         viewOverview.style.display = "block";
         loadPeople();
       }
@@ -819,16 +1035,14 @@
         });
         if (response.status === 401) {
           localStorage.removeItem("drive_auth_token");
-          alert(
-            "Your session has expired (1 hour limit). Please log in again.",
-          );
+          alert("Your session has expired. Please log in again.");
           location.reload();
         }
         if (!response.ok) throw new Error("API request failed.");
         return response.json();
       }
 
-      // --- EAGER PREFETCHING ENGINE ---
+      // --- Preload Engine ---
       const prefetchCache = {};
       function prefetchFolderMedia(folderId) {
         if (prefetchCache[folderId]) return;
@@ -865,7 +1079,7 @@
           });
       }
 
-      // --- Reusable Media Renderer ---
+      // --- Media Renderer ---
       const gallery = document.getElementById("image-gallery");
       function renderMedia(files) {
         gallery.innerHTML = "";
@@ -924,9 +1138,8 @@
         "Dec",
       ];
 
-      // Global Variables for Randomization + Sliding History Window
       let randomMediaPool = [];
-      let recentRandomHistory = []; // Array of Arrays (stores IDs of the last 3 random pulls)
+      let recentRandomHistory = [];
 
       async function loadPeople() {
         if (personSelect.options.length > 1) return;
@@ -937,7 +1150,6 @@
           const data = await authorizedFetch(
             `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=name`,
           );
-
           personSelect.innerHTML =
             '<option value="">-- Select Person --</option>';
           document.getElementById("game-person-select").innerHTML =
@@ -960,7 +1172,6 @@
         monthSelect.innerHTML = '<option value="">-- Select Month --</option>';
         monthSelect.disabled = true;
         if (!personId) return;
-
         try {
           const query = encodeURIComponent(
             `'${personId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
@@ -986,12 +1197,10 @@
         monthSelect.innerHTML = '<option value="">-- Select Month --</option>';
         monthSelect.disabled = true;
         if (!yearId) return;
-
         if (yearName === "date-unknown") {
           prefetchFolderMedia(yearId);
           return;
         }
-
         try {
           const query = encodeURIComponent(
             `'${yearId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
@@ -1022,10 +1231,8 @@
         const yearName =
           yearSelect.options[yearSelect.selectedIndex]?.dataset.name;
         const monthId = monthSelect.value;
-
         if (!personId || !yearId) return;
         let targetFolderId = yearId;
-
         if (yearName !== "date-unknown") {
           if (!monthId) {
             gallery.innerHTML =
@@ -1034,13 +1241,12 @@
           }
           targetFolderId = monthId;
         }
-
         try {
           let filesData;
           if (prefetchCache[targetFolderId]) {
-            if (prefetchCache[targetFolderId].status === "done") {
+            if (prefetchCache[targetFolderId].status === "done")
               filesData = prefetchCache[targetFolderId].data;
-            } else if (prefetchCache[targetFolderId].status === "loading") {
+            else if (prefetchCache[targetFolderId].status === "loading") {
               gallery.innerHTML = "Fetching from Drive...";
               filesData = await prefetchCache[targetFolderId].promise;
             }
@@ -1062,9 +1268,7 @@
       randomBtn.addEventListener("click", async () => {
         gallery.innerHTML =
           "Gathering random media... (This might take a moment the first time)";
-
         try {
-          // 1. Initial Load of the massive pool
           if (randomMediaPool.length === 0) {
             const imageQuery = encodeURIComponent(
               `(mimeType contains 'image/' or mimeType contains 'video/') and trashed = false`,
@@ -1074,24 +1278,18 @@
             if (data.files && data.files.length > 0)
               randomMediaPool = data.files;
           }
-
           if (randomMediaPool.length === 0) {
             gallery.innerHTML =
               "<span style='color:#ef4444;'>No media found in your Drive.</span>";
             return;
           }
 
-          // 2. Sliding Window Filtering
-          // Flatten the history of recent IDs so we can exclude them
           let excludedIds = new Set(recentRandomHistory.flat());
           let availablePool = randomMediaPool.filter(
             (file) => !excludedIds.has(file.id),
           );
-
           const neededItems = Math.min(200, randomMediaPool.length);
 
-          // Fallback: If the user doesn't have enough photos in their drive to support excluding
-          // the last 3 clicks, we drop the oldest history until we have enough to show.
           while (
             availablePool.length < neededItems &&
             recentRandomHistory.length > 0
@@ -1102,26 +1300,15 @@
               (file) => !excludedIds.has(file.id),
             );
           }
-
-          // 3. Shuffle and pick from the fresh pool
           const shuffled = availablePool.sort(() => 0.5 - Math.random());
           const selected = shuffled.slice(0, neededItems);
+          recentRandomHistory.push(selected.map((f) => f.id));
+          if (recentRandomHistory.length > 3) recentRandomHistory.shift();
 
-          // 4. Update the history with this current set
-          const selectedIds = selected.map((file) => file.id);
-          recentRandomHistory.push(selectedIds);
-
-          // Only remember the last 3 clicks
-          if (recentRandomHistory.length > 3) {
-            recentRandomHistory.shift();
-          }
-
-          // 5. Force preload the top 20 random items so it renders fast
           selected.slice(0, 20).forEach((file) => {
             if (file.thumbnailLink)
               new Image().src = file.thumbnailLink.replace("=s220", "=w800");
           });
-
           renderMedia(selected);
         } catch (error) {
           gallery.innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
@@ -1184,7 +1371,6 @@
               let randomMonths = dataMonths.files
                 .sort(() => 0.5 - Math.random())
                 .slice(0, 2);
-
               for (let m of randomMonths) {
                 let qImg = encodeURIComponent(
                   `'${m.id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
@@ -1213,6 +1399,7 @@
         gameStatus.innerText =
           "Gathering random photos of this person... (Takes a few seconds)";
         canvas.style.display = "none";
+        document.getElementById("view-game").classList.remove("active-game");
         clearInterval(gameInterval);
 
         const links = await fetchImagesForGame(personId);
@@ -1237,7 +1424,6 @@
             });
           }),
         );
-
         snakeImagePool = snakeImagePool.filter((img) => img !== null);
         if (snakeImagePool.length === 0) {
           gameStatus.innerText = "Failed to process images.";
@@ -1245,8 +1431,9 @@
           return;
         }
 
-        gameStatus.innerHTML = `Ready! Use <b>W A S D</b> keys to control the snake.`;
+        gameStatus.innerHTML = `Ready! Use <b>W A S D</b> keys (or on-screen pad) to control the snake.`;
         canvas.style.display = "block";
+        document.getElementById("view-game").classList.add("active-game"); // Triggers touch D-Pad visibility in CSS
         startGameBtn.disabled = false;
         startGameBtn.innerText = "Restart Game";
 
@@ -1328,9 +1515,9 @@
         );
       }
 
-      window.addEventListener("keydown", (e) => {
+      // Input Logic (Keyboard + Mobile D-Pad)
+      function setDirection(key) {
         if (viewGame.style.display === "block") {
-          const key = e.key.toLowerCase();
           if (key === "w" && dy === 0) {
             dx = 0;
             dy = -gridSize;
@@ -1348,7 +1535,23 @@
             dy = 0;
           }
         }
-      });
+      }
+
+      window.addEventListener("keydown", (e) =>
+        setDirection(e.key.toLowerCase()),
+      );
+      document
+        .getElementById("dpad-up")
+        .addEventListener("click", () => setDirection("w"));
+      document
+        .getElementById("dpad-down")
+        .addEventListener("click", () => setDirection("s"));
+      document
+        .getElementById("dpad-left")
+        .addEventListener("click", () => setDirection("a"));
+      document
+        .getElementById("dpad-right")
+        .addEventListener("click", () => setDirection("d"));
     </script>
   </body>
 </html>
