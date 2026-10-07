@@ -421,17 +421,25 @@
       }
       .close-btn {
         position: absolute;
-        top: -45px;
-        right: 0;
-        color: var(--text-muted);
-        font-size: 36px;
+        top: 15px;
+        right: 15px;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.6);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
         cursor: pointer;
-        font-weight: 300;
-        line-height: 1;
-        transition: color 0.2s;
+        font-weight: 400;
+        z-index: 1010; /* Ensures it sits above the iframe */
+        transition: all 0.2s ease;
       }
       .close-btn:hover {
-        color: #ef4444;
+        background: rgba(239, 68, 68, 0.9); /* Red hover effect */
+        color: white;
       }
       #media-frame {
         width: 100%;
@@ -609,8 +617,10 @@
         /* Fix modal close button for smaller screens */
         .close-btn {
           right: 10px;
-          top: -40px;
-          font-size: 30px;
+          top: 10px;
+          font-size: 24px;
+          width: 35px;
+          height: 35px;
         }
 
         /* Show mobile touch D-Pad when game is active */
