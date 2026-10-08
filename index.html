@@ -966,7 +966,7 @@
           <button id="random-btn" class="btn-secondary">Random</button>
         </div>
         <div id="image-gallery">
-          Select a person, year, and month to view media, or click Random.
+          Select a person and year to view media, or click Random.
         </div>
       </div>
 
@@ -1122,7 +1122,7 @@
       };
 
       // ==============================================================
-      // EXHAUSTIVE SHALISA DATASET: UNCOMPROMISING 5-PILLAR EXEGESIS
+      // EXHAUSTIVE CHALISA DATASET: UNCOMPROMISING 5-PILLAR EXEGESIS
       // ==============================================================
       const chalisaData = [
         {
@@ -2774,11 +2774,57 @@
         }
       }
 
+      // Recursive / Multi-subfolder Fetcher for Full-Year Loading
+      async function fetchMediaRecursive(folderId) {
+        const subfolderQuery = encodeURIComponent(
+          `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+        );
+        const subfolderUrl = `https://www.googleapis.com/drive/v3/files?q=${subfolderQuery}&fields=files(id,name)`;
+        const subfolderData = await authorizedFetch(subfolderUrl);
+
+        if (subfolderData.files && subfolderData.files.length > 0) {
+          const fetchPromises = subfolderData.files.map(async (sub) => {
+            if (
+              prefetchCache[sub.id] &&
+              prefetchCache[sub.id].status === "done"
+            ) {
+              return prefetchCache[sub.id].data || [];
+            }
+            const q = encodeURIComponent(
+              `'${sub.id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+            );
+            const data = await authorizedFetch(
+              `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,thumbnailLink,mimeType)`,
+            );
+            return data.files || [];
+          });
+
+          const results = await Promise.all(fetchPromises);
+          return results.flat();
+        }
+
+        if (prefetchCache[folderId]) {
+          if (prefetchCache[folderId].status === "done") {
+            return prefetchCache[folderId].data || [];
+          } else if (prefetchCache[folderId].status === "loading") {
+            return await prefetchCache[folderId].promise;
+          }
+        }
+
+        const directQuery = encodeURIComponent(
+          `'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+        );
+        const directUrl = `https://www.googleapis.com/drive/v3/files?q=${directQuery}&fields=files(id,name,thumbnailLink,mimeType)`;
+        const directData = await authorizedFetch(directUrl);
+        return directData.files || [];
+      }
+
       personSelect.addEventListener("change", async () => {
         const personId = personSelect.value;
         yearSelect.innerHTML = '<option value="">-- Select Year --</option>';
         yearSelect.disabled = true;
-        monthSelect.innerHTML = '<option value="">-- Select Month --</option>';
+        monthSelect.innerHTML =
+          '<option value="">-- All Months (Whole Year) --</option>';
         monthSelect.disabled = true;
         if (!personId) return;
         try {
@@ -2803,7 +2849,8 @@
         const yearId = yearSelect.value;
         const yearName =
           yearSelect.options[yearSelect.selectedIndex]?.dataset.name;
-        monthSelect.innerHTML = '<option value="">-- Select Month --</option>';
+        monthSelect.innerHTML =
+          '<option value="">-- All Months (Whole Year) --</option>';
         monthSelect.disabled = true;
         if (!yearId) return;
         if (yearName === "date-unknown") {
@@ -2821,12 +2868,15 @@
             data.files.sort(
               (a, b) => monthOrder.indexOf(a.name) - monthOrder.indexOf(b.name),
             );
-            data.files.forEach((f) =>
-              monthSelect.appendChild(new Option(f.name, f.id)),
-            );
+            data.files.forEach((f) => {
+              monthSelect.appendChild(new Option(f.name, f.id));
+              prefetchFolderMedia(f.id);
+            });
             monthSelect.disabled = false;
           }
-        } catch (error) {}
+        } catch (error) {
+          console.error("Error loading months:", error);
+        }
       });
 
       monthSelect.addEventListener("change", () => {
@@ -2840,34 +2890,43 @@
         const yearName =
           yearSelect.options[yearSelect.selectedIndex]?.dataset.name;
         const monthId = monthSelect.value;
-        if (!personId || !yearId) return;
-        let targetFolderId = yearId;
-        if (yearName !== "date-unknown") {
-          if (!monthId) {
-            gallery.innerHTML =
-              "<p style='color:#ef4444;'>Please select a month.</p>";
-            return;
-          }
-          targetFolderId = monthId;
+
+        if (!personId) {
+          gallery.innerHTML =
+            "<p style='color:#ef4444;'>Please select a person.</p>";
+          return;
         }
+        if (!yearId) {
+          gallery.innerHTML =
+            "<p style='color:#ef4444;'>Please select a year.</p>";
+          return;
+        }
+
         try {
-          let filesData;
-          if (prefetchCache[targetFolderId]) {
-            if (prefetchCache[targetFolderId].status === "done")
-              filesData = prefetchCache[targetFolderId].data;
-            else if (prefetchCache[targetFolderId].status === "loading") {
-              gallery.innerHTML = "Fetching from Drive...";
-              filesData = await prefetchCache[targetFolderId].promise;
+          gallery.innerHTML = "Loading media...";
+          let filesData = [];
+
+          if (monthId) {
+            if (prefetchCache[monthId]) {
+              if (prefetchCache[monthId].status === "done") {
+                filesData = prefetchCache[monthId].data;
+              } else if (prefetchCache[monthId].status === "loading") {
+                gallery.innerHTML = "Fetching from Drive...";
+                filesData = await prefetchCache[monthId].promise;
+              }
+            } else {
+              const imageQuery = encodeURIComponent(
+                `'${monthId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
+              );
+              const url = `https://www.googleapis.com/drive/v3/files?q=${imageQuery}&fields=files(id,name,thumbnailLink,mimeType)`;
+              const data = await authorizedFetch(url);
+              filesData = data.files || [];
             }
           } else {
-            gallery.innerHTML = "Loading media...";
-            const imageQuery = encodeURIComponent(
-              `'${targetFolderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed = false`,
-            );
-            const url = `https://www.googleapis.com/drive/v3/files?q=${imageQuery}&fields=files(id,name,thumbnailLink,mimeType)`;
-            const data = await authorizedFetch(url);
-            filesData = data.files;
+            gallery.innerHTML = "Fetching media for the entire year...";
+            filesData = await fetchMediaRecursive(yearId);
           }
+
           renderMedia(filesData);
         } catch (error) {
           gallery.innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
