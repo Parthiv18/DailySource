@@ -81,7 +81,7 @@
 
       /* Mobile Header & Overlay */
       .mobile-header {
-        display: none;
+        display: none; /* Handled by media query below */
         position: fixed;
         top: 0;
         left: 0;
@@ -213,6 +213,7 @@
         box-sizing: border-box;
         min-height: 100vh;
         margin-left: var(--sidebar-width);
+        position: relative;
         transition:
           margin 0.3s ease,
           padding 0.3s ease;
@@ -228,41 +229,64 @@
         color: var(--text-main);
       }
 
-      /* Auth & Controls */
+      /* Views & Games */
+      #view-overview {
+        display: none;
+        position: relative; /* Anchor for the auth overlay */
+        min-height: calc(100vh - 60px);
+      }
+      #view-game,
+      #view-daily,
+      #view-sanatana {
+        display: none;
+      }
+
+      /* Auth & Controls - Scoped specifically to Overview */
       #auth-container {
-        display: flex;
+        display: none; /* Shown dynamically inside overview if not authed */
         align-items: center;
         justify-content: center;
-        height: 100vh;
-        width: 100vw;
-        position: fixed;
-        top: 0;
-        left: 0;
-        background-color: var(--bg-color);
-        z-index: 200;
+        position: absolute;
+        top: -30px; /* Offset main-content padding */
+        left: -40px;
+        width: calc(100% + 80px);
+        height: calc(100% + 60px);
+        background-color: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 50;
       }
+
       #auth-section {
-        width: 90%;
-        max-width: 400px;
+        width: 320px;
+        height: 320px;
         background: var(--card-bg);
         padding: 40px;
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-lg);
         border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         text-align: center;
         box-sizing: border-box;
       }
       #auth-section h1 {
         text-align: center;
-        margin-bottom: 20px;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.75rem;
       }
       #status-text {
         color: var(--text-muted);
-        margin-bottom: 30px;
+        margin-bottom: 25px;
         line-height: 1.5;
+        font-size: 0.95rem;
       }
       #login-btn {
         width: 100%;
+        margin-top: auto;
       }
 
       .controls {
@@ -459,14 +483,6 @@
         height: 100%;
         border: none;
         background-color: #000;
-      }
-
-      /* Views & Games */
-      #view-overview,
-      #view-game,
-      #view-daily,
-      #view-sanatana {
-        display: none;
       }
 
       #game-canvas {
@@ -855,6 +871,14 @@
           padding: 20px 14px;
         }
 
+        #auth-container {
+          left: 0;
+          width: 100vw;
+          top: 0;
+          height: 100%;
+          position: fixed;
+        }
+
         #image-gallery {
           grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
           gap: 10px;
@@ -910,26 +934,15 @@
     </style>
   </head>
   <body>
-    <!-- Centered Login Screen -->
-    <div id="auth-container">
-      <div id="auth-section">
-        <h1>Welcome</h1>
-        <p id="status-text">Loading configuration...</p>
-        <button id="login-btn" onclick="handleAuthClick()" disabled>
-          Log In with Google
-        </button>
-      </div>
-    </div>
-
     <!-- Mobile Header -->
-    <header class="mobile-header" id="mobile-header" style="display: none">
+    <header class="mobile-header" id="mobile-header">
       <div class="mobile-header-brand">Daily Source</div>
       <button class="menu-toggle" id="menu-toggle">☰</button>
     </header>
     <div class="mobile-overlay" id="mobile-overlay"></div>
 
     <!-- Sidebar (Emoji-Free Navigation) -->
-    <aside class="sidebar" id="sidebar-nav" style="display: none">
+    <aside class="sidebar" id="sidebar-nav">
       <div class="sidebar-brand">Daily Source</div>
       <ul class="nav-menu">
         <li class="nav-item active" id="nav-overview-btn">
@@ -948,9 +961,20 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="main-content" id="main-content" style="display: none">
-      <!-- 1. Overview View -->
-      <div id="view-overview">
+    <main class="main-content" id="main-content">
+      <!-- 1. Overview View (Requires Login) -->
+      <div id="view-overview" style="display: block">
+        <!-- Scoped Login Screen Popup Overlay (Only covers Overview) -->
+        <div id="auth-container">
+          <div id="auth-section">
+            <h1>Welcome</h1>
+            <p id="status-text">Please log in to authorize access.</p>
+            <button id="login-btn" onclick="handleAuthClick()" disabled>
+              Log In with Google
+            </button>
+          </div>
+        </div>
+
         <h1>Overview</h1>
         <div class="controls">
           <select id="person-select">
@@ -970,12 +994,12 @@
         </div>
       </div>
 
-      <!-- 2. Snake Game View -->
+      <!-- 2. Snake Game View (Public) -->
       <div id="view-game">
         <h1>Snake Game</h1>
         <div class="controls">
           <select id="game-person-select">
-            <option value="">-- Select Person --</option>
+            <option value="">-- Login in Overview to Sync People --</option>
           </select>
           <button id="start-game-btn">Start Game</button>
         </div>
@@ -1002,7 +1026,7 @@
         </div>
       </div>
 
-      <!-- 3. Daily Games View -->
+      <!-- 3. Daily Games View (Public) -->
       <div id="view-daily">
         <h1>Daily Games</h1>
         <p style="color: var(--text-muted); margin-bottom: 25px">
@@ -1011,7 +1035,7 @@
         <div class="games-grid" id="games-grid"></div>
       </div>
 
-      <!-- 4. Sanatana Dharma View -->
+      <!-- 4. Sanatana Dharma View (Public) -->
       <div id="view-sanatana">
         <h1>Sanatana Dharma</h1>
         <div class="controls">
@@ -1072,6 +1096,27 @@
       let tokenClient;
       let accessToken = null;
 
+      // Smart Caching / System Design Implementation
+      const directoryCache = {}; // Stores { personId: { name, years: [{id, name}], monthsCache: { yearId: [{id, name}] } } }
+      const monthOrder = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      // View Selectors
+      const viewOverview = document.getElementById("view-overview");
+      const authContainer = document.getElementById("auth-container");
+
       // Mobile Menu Logic
       const sidebar = document.getElementById("sidebar-nav");
       const overlay = document.getElementById("mobile-overlay");
@@ -1095,7 +1140,6 @@
       const navDailyBtn = document.getElementById("nav-daily-btn");
       const navSanatanaBtn = document.getElementById("nav-sanatana-btn");
 
-      const viewOverview = document.getElementById("view-overview");
       const viewGame = document.getElementById("view-game");
       const viewDaily = document.getElementById("view-daily");
       const viewSanatana = document.getElementById("view-sanatana");
@@ -2568,11 +2612,13 @@
             const tokenData = JSON.parse(cachedTokenString);
             if (Date.now() < tokenData.expiresAt) {
               accessToken = tokenData.token;
-              initApp();
             } else {
               localStorage.removeItem("drive_auth_token");
             }
           }
+
+          // Always initialize app layout regardless of Auth (so public tabs work)
+          initAppLayout();
 
           const script = document.createElement("script");
           script.src = "https://accounts.google.com/gsi/client";
@@ -2593,13 +2639,16 @@
                       Date.now() + (tokenResponse.expires_in - 60) * 1000,
                   }),
                 );
-                initApp();
+                completeLogin();
               },
             });
+
             if (!accessToken) {
-              document.getElementById("status-text").textContent =
-                "Please log in to authorize access.";
+              // Wait for user to trigger auth
+              authContainer.style.display = "flex";
               document.getElementById("login-btn").disabled = false;
+            } else {
+              completeLogin();
             }
           };
           document.head.appendChild(script);
@@ -2609,12 +2658,9 @@
         }
       }
 
-      function initApp() {
-        document.getElementById("auth-container").style.display = "none";
-        document.getElementById("sidebar-nav").style.display = "flex";
+      function initAppLayout() {
         document.getElementById("mobile-header").style.display =
           window.innerWidth <= 768 ? "flex" : "none";
-        document.getElementById("main-content").style.display = "block";
 
         window.addEventListener("resize", () => {
           if (window.innerWidth <= 768) {
@@ -2625,20 +2671,26 @@
           }
         });
 
-        // Initialize Sanatana Dharma state & persistence
         loadSavedVerseIndex();
         populateQuickJump();
+      }
 
-        viewOverview.style.display = "block";
-        loadPeople();
+      // Triggers after successful token generation/validation
+      function completeLogin() {
+        authContainer.style.display = "none";
+
+        // System Design: Start fetching all directory data in the background instantly
+        backgroundPreloadAllDirectories();
       }
 
       window.onload = loadConfig;
+
       function handleAuthClick() {
         tokenClient.requestAccessToken({ prompt: "consent" });
       }
 
       async function authorizedFetch(url) {
+        if (!accessToken) throw new Error("No access token.");
         const response = await fetch(url, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
@@ -2651,10 +2703,100 @@
         return response.json();
       }
 
-      // Preload Engine
+      // -------------------------------------------------------------
+      // SYSTEM DESIGN: BACKGROUND DIRECTORY PRELOADER
+      // -------------------------------------------------------------
+      // This fetches the entire tree of People -> Years -> Months silently
+      // in the background right after login so the user never sees loading
+      // spinners when interacting with the dropdowns.
+      async function backgroundPreloadAllDirectories() {
+        const personSelect = document.getElementById("person-select");
+        const gamePersonSelect = document.getElementById("game-person-select");
+
+        try {
+          // 1. Fetch Root (People)
+          const query = encodeURIComponent(
+            `'${ROOT_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+          );
+          const peopleData = await authorizedFetch(
+            `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=name`,
+          );
+
+          if (!peopleData.files) return;
+
+          // Clear default options & populate selects instantly
+          personSelect.innerHTML =
+            '<option value="">-- Select Person --</option>';
+          gamePersonSelect.innerHTML =
+            '<option value="">-- Select Person --</option>';
+
+          peopleData.files.forEach((f) => {
+            personSelect.appendChild(new Option(f.name, f.id));
+            gamePersonSelect.appendChild(new Option(f.name, f.id));
+
+            // Init cache structural tree
+            directoryCache[f.id] = {
+              name: f.name,
+              years: null,
+              monthsCache: {},
+            };
+          });
+
+          // 2. Fetch Years for each Person incrementally in background
+          for (const person of peopleData.files) {
+            try {
+              const qYear = encodeURIComponent(
+                `'${person.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+              );
+              authorizedFetch(
+                `https://www.googleapis.com/drive/v3/files?q=${qYear}&fields=files(id,name)`,
+              )
+                .then((yearData) => {
+                  if (yearData.files) {
+                    directoryCache[person.id].years = yearData.files;
+
+                    // 3. Fetch Months for each Year incrementally
+                    yearData.files.forEach((year) => {
+                      if (year.name !== "date-unknown") {
+                        const qMonth = encodeURIComponent(
+                          `'${year.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                        );
+                        authorizedFetch(
+                          `https://www.googleapis.com/drive/v3/files?q=${qMonth}&fields=files(id,name)`,
+                        )
+                          .then((monthData) => {
+                            if (monthData.files) {
+                              // Sort months properly
+                              monthData.files.sort(
+                                (a, b) =>
+                                  monthOrder.indexOf(a.name) -
+                                  monthOrder.indexOf(b.name),
+                              );
+                              directoryCache[person.id].monthsCache[year.id] =
+                                monthData.files;
+                            }
+                          })
+                          .catch((e) =>
+                            console.warn("Background Month Fetch Error", e),
+                          );
+                      }
+                    });
+                  }
+                })
+                .catch((e) => console.warn("Background Year Fetch Error", e));
+            } catch (err) {
+              console.warn("Background Preload Loop Error", err);
+            }
+          }
+        } catch (error) {
+          console.error("Root Directory Fetch Failed", error);
+        }
+      }
+
+      // Preload Engine For Media (Images/Videos)
       const prefetchCache = {};
       function prefetchFolderMedia(folderId) {
-        if (prefetchCache[folderId]) return;
+        if (prefetchCache[folderId] || !accessToken) return;
         prefetchCache[folderId] = {
           status: "loading",
           promise: null,
@@ -2673,9 +2815,10 @@
               for (let i = 0; i < preloadCount; i++) {
                 if (data.files[i].thumbnailLink) {
                   const img = new Image();
+                  // Reverted to =w2048 to prevent broken images[cite: 3] while maintaining high quality
                   img.src = data.files[i].thumbnailLink.replace(
                     "=s220",
-                    "=w800",
+                    "=w2048",
                   );
                 }
               }
@@ -2707,9 +2850,10 @@
             };
 
             const img = document.createElement("img");
+            // Fix: Use =w2048 instead of =s0 to prevent broken icons on non-standard media[cite: 3]
             img.src = file.thumbnailLink
-              ? file.thumbnailLink.replace("=s220", "=w800")
-              : `https://drive.google.com/thumbnail?id=${file.id}&sz=w800`;
+              ? file.thumbnailLink.replace("=s220", "=w2048")
+              : `https://drive.google.com/thumbnail?id=${file.id}&sz=w2048`;
             img.className = "gallery-img";
             link.appendChild(img);
 
@@ -2726,53 +2870,15 @@
         }
       }
 
-      // Overview Logic
+      // Overview Logic Form Handlers
       const personSelect = document.getElementById("person-select");
       const yearSelect = document.getElementById("year-select");
       const monthSelect = document.getElementById("month-select");
       const loadBtn = document.getElementById("load-btn");
       const randomBtn = document.getElementById("random-btn");
-      const monthOrder = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
 
       let randomMediaPool = [];
       let recentRandomHistory = [];
-
-      async function loadPeople() {
-        if (personSelect.options.length > 1) return;
-        try {
-          const query = encodeURIComponent(
-            `'${ROOT_FOLDER_ID}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-          );
-          const data = await authorizedFetch(
-            `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=name`,
-          );
-          personSelect.innerHTML =
-            '<option value="">-- Select Person --</option>';
-          document.getElementById("game-person-select").innerHTML =
-            '<option value="">-- Select Person --</option>';
-          data.files.forEach((f) => {
-            personSelect.appendChild(new Option(f.name, f.id));
-            document
-              .getElementById("game-person-select")
-              .appendChild(new Option(f.name, f.id));
-          });
-        } catch (error) {
-          gallery.innerHTML = `<p style="color:#ef4444;">Error: ${error.message}</p>`;
-        }
-      }
 
       // Recursive / Multi-subfolder Fetcher for Full-Year Loading
       async function fetchMediaRecursive(folderId) {
@@ -2827,55 +2933,91 @@
           '<option value="">-- All Months (Whole Year) --</option>';
         monthSelect.disabled = true;
         if (!personId) return;
-        try {
-          const query = encodeURIComponent(
-            `'${personId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-          );
-          const data = await authorizedFetch(
-            `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=name`,
-          );
-          data.files.forEach((f) => {
+
+        // Use smart cached data if available
+        if (directoryCache[personId] && directoryCache[personId].years) {
+          directoryCache[personId].years.forEach((f) => {
             const opt = new Option(f.name, f.id);
             opt.dataset.name = f.name;
             yearSelect.appendChild(opt);
           });
           yearSelect.disabled = false;
-        } catch (error) {
-          gallery.innerHTML = `<p style="color:#ef4444;">Error: ${error.message}</p>`;
+        } else {
+          // Fallback if background fetch isn't done yet
+          try {
+            const query = encodeURIComponent(
+              `'${personId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+            );
+            const data = await authorizedFetch(
+              `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&orderBy=name`,
+            );
+            data.files.forEach((f) => {
+              const opt = new Option(f.name, f.id);
+              opt.dataset.name = f.name;
+              yearSelect.appendChild(opt);
+            });
+            yearSelect.disabled = false;
+            // Update cache
+            if (directoryCache[personId])
+              directoryCache[personId].years = data.files;
+          } catch (error) {
+            gallery.innerHTML = `<p style="color:#ef4444;">Error: ${error.message}</p>`;
+          }
         }
       });
 
       yearSelect.addEventListener("change", async () => {
+        const personId = personSelect.value;
         const yearId = yearSelect.value;
         const yearName =
           yearSelect.options[yearSelect.selectedIndex]?.dataset.name;
+
         monthSelect.innerHTML =
           '<option value="">-- All Months (Whole Year) --</option>';
         monthSelect.disabled = true;
         if (!yearId) return;
+
         if (yearName === "date-unknown") {
           prefetchFolderMedia(yearId);
           return;
         }
-        try {
-          const query = encodeURIComponent(
-            `'${yearId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-          );
-          const data = await authorizedFetch(
-            `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`,
-          );
-          if (data.files && data.files.length > 0) {
-            data.files.sort(
-              (a, b) => monthOrder.indexOf(a.name) - monthOrder.indexOf(b.name),
+
+        // Use smart cached data if available
+        if (
+          directoryCache[personId] &&
+          directoryCache[personId].monthsCache[yearId]
+        ) {
+          directoryCache[personId].monthsCache[yearId].forEach((f) => {
+            monthSelect.appendChild(new Option(f.name, f.id));
+            prefetchFolderMedia(f.id);
+          });
+          monthSelect.disabled = false;
+        } else {
+          // Fallback if background fetch isn't done yet
+          try {
+            const query = encodeURIComponent(
+              `'${yearId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
             );
-            data.files.forEach((f) => {
-              monthSelect.appendChild(new Option(f.name, f.id));
-              prefetchFolderMedia(f.id);
-            });
-            monthSelect.disabled = false;
+            const data = await authorizedFetch(
+              `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`,
+            );
+            if (data.files && data.files.length > 0) {
+              data.files.sort(
+                (a, b) =>
+                  monthOrder.indexOf(a.name) - monthOrder.indexOf(b.name),
+              );
+              data.files.forEach((f) => {
+                monthSelect.appendChild(new Option(f.name, f.id));
+                prefetchFolderMedia(f.id);
+              });
+              monthSelect.disabled = false;
+              // Update cache
+              if (directoryCache[personId])
+                directoryCache[personId].monthsCache[yearId] = data.files;
+            }
+          } catch (error) {
+            console.error("Error loading months:", error);
           }
-        } catch (error) {
-          console.error("Error loading months:", error);
         }
       });
 
@@ -2956,15 +3098,25 @@
             const fetchPromises = randomPeople.map(async (person) => {
               let personMedia = [];
               try {
-                const qYear = encodeURIComponent(
-                  `'${person.value}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-                );
-                const yearData = await authorizedFetch(
-                  `https://www.googleapis.com/drive/v3/files?q=${qYear}&fields=files(id,name)`,
-                );
-                if (!yearData.files) return [];
+                // Use cached years if available to speed up random generation
+                let yearsToUse = [];
+                if (
+                  directoryCache[person.value] &&
+                  directoryCache[person.value].years
+                ) {
+                  yearsToUse = directoryCache[person.value].years;
+                } else {
+                  const qYear = encodeURIComponent(
+                    `'${person.value}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                  );
+                  const yearData = await authorizedFetch(
+                    `https://www.googleapis.com/drive/v3/files?q=${qYear}&fields=files(id,name)`,
+                  );
+                  yearsToUse = yearData.files || [];
+                }
 
-                const randomYears = yearData.files
+                if (!yearsToUse || yearsToUse.length === 0) return [];
+                const randomYears = yearsToUse
                   .sort(() => 0.5 - Math.random())
                   .slice(0, 2);
 
@@ -2978,15 +3130,26 @@
                     );
                     if (mediaData.files) personMedia.push(...mediaData.files);
                   } else {
-                    const qMonth = encodeURIComponent(
-                      `'${year.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-                    );
-                    const monthData = await authorizedFetch(
-                      `https://www.googleapis.com/drive/v3/files?q=${qMonth}&fields=files(id,name)`,
-                    );
-                    if (!monthData.files) continue;
+                    let monthsToUse = [];
+                    if (
+                      directoryCache[person.value] &&
+                      directoryCache[person.value].monthsCache[year.id]
+                    ) {
+                      monthsToUse =
+                        directoryCache[person.value].monthsCache[year.id];
+                    } else {
+                      const qMonth = encodeURIComponent(
+                        `'${year.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                      );
+                      const monthData = await authorizedFetch(
+                        `https://www.googleapis.com/drive/v3/files?q=${qMonth}&fields=files(id,name)`,
+                      );
+                      monthsToUse = monthData.files || [];
+                    }
 
-                    const randomMonths = monthData.files
+                    if (!monthsToUse || monthsToUse.length === 0) continue;
+
+                    const randomMonths = monthsToUse
                       .sort(() => 0.5 - Math.random())
                       .slice(0, 2);
                     for (let month of randomMonths) {
@@ -3045,8 +3208,9 @@
           if (recentRandomHistory.length > 3) recentRandomHistory.shift();
 
           selected.slice(0, 20).forEach((file) => {
-            if (file.thumbnailLink)
-              new Image().src = file.thumbnailLink.replace("=s220", "=w800");
+            if (file.thumbnailLink) {
+              new Image().src = file.thumbnailLink.replace("=s220", "=w2048");
+            }
           });
 
           renderMedia(selected);
@@ -3083,13 +3247,21 @@
       async function fetchImagesForGame(personId) {
         let allThumbnails = [];
         try {
-          let q1 = encodeURIComponent(
-            `'${personId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-          );
-          let dataYears = await authorizedFetch(
-            `https://www.googleapis.com/drive/v3/files?q=${q1}&fields=files(id,name)`,
-          );
-          let randomYears = dataYears.files
+          // Attempt to utilize system cache for speed
+          let yearsToUse = [];
+          if (directoryCache[personId] && directoryCache[personId].years) {
+            yearsToUse = directoryCache[personId].years;
+          } else {
+            const q1 = encodeURIComponent(
+              `'${personId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+            );
+            const dataYears = await authorizedFetch(
+              `https://www.googleapis.com/drive/v3/files?q=${q1}&fields=files(id,name)`,
+            );
+            yearsToUse = dataYears.files || [];
+          }
+
+          let randomYears = yearsToUse
             .sort(() => 0.5 - Math.random())
             .slice(0, 2);
 
@@ -3106,13 +3278,23 @@
                   ...dImg.files.map((f) => f.thumbnailLink).filter(Boolean),
                 );
             } else {
-              let q2 = encodeURIComponent(
-                `'${y.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
-              );
-              let dataMonths = await authorizedFetch(
-                `https://www.googleapis.com/drive/v3/files?q=${q2}&fields=files(id,name)`,
-              );
-              let randomMonths = dataMonths.files
+              let monthsToUse = [];
+              if (
+                directoryCache[personId] &&
+                directoryCache[personId].monthsCache[y.id]
+              ) {
+                monthsToUse = directoryCache[personId].monthsCache[y.id];
+              } else {
+                let q2 = encodeURIComponent(
+                  `'${y.id}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+                );
+                let dataMonths = await authorizedFetch(
+                  `https://www.googleapis.com/drive/v3/files?q=${q2}&fields=files(id,name)`,
+                );
+                monthsToUse = dataMonths.files || [];
+              }
+
+              let randomMonths = monthsToUse
                 .sort(() => 0.5 - Math.random())
                 .slice(0, 2);
               for (let m of randomMonths) {
@@ -3136,6 +3318,13 @@
       }
 
       startGameBtn.addEventListener("click", async () => {
+        if (!accessToken) {
+          alert(
+            "Please login via the Overview tab first to access your Google Drive photos for the game.",
+          );
+          return;
+        }
+
         const personId = gamePersonSelect.value;
         if (!personId) return;
 
@@ -3164,7 +3353,8 @@
               const img = new Image();
               img.onload = () => resolve(img);
               img.onerror = () => resolve(null);
-              img.src = link.replace("=s220", "=w200");
+              // Maximize Snake Photo qualities too
+              img.src = link.replace("=s220", "=w2048");
             });
           }),
         );
